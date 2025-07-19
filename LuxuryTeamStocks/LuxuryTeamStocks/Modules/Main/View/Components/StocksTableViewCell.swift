@@ -75,10 +75,10 @@ extension StocksTableViewCell {
         titleLabel.text = stock.symbol
         subTitleLabel.text = stock.name
         isFavoriteImageView.image = UIImage(named: "StarGray")
-        rateLabel.text = "$ \(stock.price.cleanString)"
+        rateLabel.text = "$\(stock.price.cleanString)"
         updateChangeStockPrice(with: stock)
 
-        cellContainer.backgroundColor = isGray ? AppConstants.Colors.gray : .clear
+        cellContainer.backgroundColor = isGray ? AppConstants.Colors.brightGray : .clear
 
 //        rateChangePercentLabel.backgroundColor = .red
 //        rateChangeStack.setBorder(borderWidth: 1)
@@ -88,13 +88,13 @@ extension StocksTableViewCell {
     }
 
     private func updateChangeStockPrice(with stock: StockModel) {
-        let changeText = "$\(stock.change) (\(stock.changePercent)%)"
+        let changeText = "$\(stock.change) (\(abs(stock.changePercent))%)"
 
         if stock.change > 0 {
-            rateChangeLabel.textColor = AppConstants.Colors.red
+            rateChangeLabel.textColor = AppConstants.Colors.green
             rateChangeLabel.text = "+\(changeText)"
         } else {
-            rateChangeLabel.textColor = AppConstants.Colors.green
+            rateChangeLabel.textColor = AppConstants.Colors.red
             rateChangeLabel.text = "-\(changeText)"
 
         }

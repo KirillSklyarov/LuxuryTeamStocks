@@ -49,17 +49,16 @@ final class StocksTableView: UITableView {
 private extension StocksTableView {
     func setupUI() {
         showsVerticalScrollIndicator = false
-        backgroundColor = .clear
         allowsSelection = false
         separatorStyle = .none
-        estimatedRowHeight = 70/874
-        rowHeight = UITableView.automaticDimension
-        tableHeaderView = UIView()
-
         registerCell(StocksTableViewCell.self)
 
         dataSource = self
         delegate = self
+
+        //        estimatedRowHeight = 70/874
+        //        rowHeight = UITableView.automaticDimension
+
     }
 }
 
@@ -100,15 +99,25 @@ extension StocksTableView: UITableViewDataSource, UITableViewDelegate {
 // MARK: - Supporting methods
 private extension StocksTableView {
     func configureTableViewHeader() -> UIView {
-        let stockCategory = AppLabel(type: .category)
-        let favoriteCategory = AppLabel(type: .category)
+        let stockButton = AppButton(style: .stocks, isSelected: true)
+        let favoriteButton = AppButton(style: .favourite)
 
-        stockCategory.text = "Stocks"
-        favoriteCategory.text = "Favorites"
-
-        let categoriesStackView = AppStackView([stockCategory, favoriteCategory, UIView()], axis: .horizontal, spacing: 20)
+        let categoriesStackView = AppStackView([stockButton, favoriteButton, UIView()], axis: .horizontal, spacing: 20)
 
         categoriesStackView.backgroundColor = .systemBackground
+
+
+        stockButton.onButtonTapped = { [weak self] tag in
+            stockButton.applySelectedStyle(true)
+            favoriteButton.applySelectedStyle(false)
+            print(tag)
+        }
+
+        favoriteButton.onButtonTapped = { [weak self] tag in
+            stockButton.applySelectedStyle(false)
+            favoriteButton.applySelectedStyle(true)
+            print(tag)
+        }
 
         return categoriesStackView
     }

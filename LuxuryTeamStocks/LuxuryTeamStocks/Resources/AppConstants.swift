@@ -22,8 +22,8 @@ struct AppConstants {
 
     enum Colors {
         static let black = UIColor(hex: "1A1A1A")
-//        static let white = UIColor(hex: "F4F4F4")
-        static let gray = UIColor(hex: "F0F4F7")
+        static let gray = UIColor(hex: "BABABA")
+        static let brightGray = UIColor(hex: "F0F4F7")
         static let green = UIColor(hex: "24B25D")
         static let red = UIColor(hex: "B22424")
     }

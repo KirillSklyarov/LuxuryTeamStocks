@@ -1,0 +1,73 @@
+//
+//  AppButtonStyle.swift
+//  LuxuryTeamStocks
+//
+//  Created by Kirill Sklyarov on 19.07.2025.
+//
+
+import UIKit
+
+enum AppButtonStyle {
+    case stocks
+    case favourite
+}
+
+final class AppButton: UIButton {
+
+    var onButtonTapped: ((Int) -> Void)?
+
+    init(style: AppButtonStyle, isSelected: Bool = false) {
+        super.init(frame: .zero)
+        configure(style, isSelected)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func applySelectedStyle(_ isSelected: Bool) {
+        if isSelected {
+            setTitleColor(.black, for: .normal)
+            titleLabel?.font = AppConstants.Fonts.headline
+        } else {
+            setTitleColor(AppConstants.Colors.gray, for: .normal)
+            titleLabel?.font = AppConstants.Fonts.regular
+        }
+    }
+
+}
+
+private extension AppButton {
+    func configure(_ style: AppButtonStyle, _ isSelected: Bool) {
+        switch style {
+        case .stocks:
+            tag = 0
+            setTitle("Stocks", for: .normal)
+        case .favourite:
+            tag = 1
+            setTitle("Favorites", for: .normal)
+        }
+        setTitleColor(.black, for: .normal)
+        titleLabel?.font = AppConstants.Fonts.headline
+        applySelectedStyle(isSelected)
+
+        addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+    }
+
+    @objc func buttonTapped(_ sender: UIButton) {
+        onButtonTapped?(sender.tag)
+    }
+}
+
+//    func setupSaveButton(type: AppButtonStyle = .save) {
+//        var config = UIButton.Configuration.plain()
+//        config.title = AppConstants.L.save()
+//        config.baseForegroundColor = AppConstants.Colors.yellow
+//        config.baseBackgroundColor = .systemBackground
+//        config.cornerStyle = .capsule
+//        config.background.strokeWidth = 1
+//        isEnabled = false
+//        config.background.strokeColor = AppConstants.Colors.gray
+//        configuration = config
+//    }
+//}
