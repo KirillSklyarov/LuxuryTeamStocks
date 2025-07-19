@@ -48,7 +48,11 @@ struct AppConstants {
         static let loadingError = "Ошибка загрузки данных"
     }
 
-    enum Height {
-        static let textField: CGFloat = 50
+    enum UserDefaultsKeys {
+        static let favourites = "favourites"
     }
+
+//    enum Height {
+//        static let textField: CGFloat = 50
+//    }
 }

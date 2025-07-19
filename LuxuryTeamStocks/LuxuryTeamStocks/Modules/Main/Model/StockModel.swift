@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct StockModel: Decodable {
+struct StockModel: Codable {
     let symbol: String
     let name: String
     let price: Double
