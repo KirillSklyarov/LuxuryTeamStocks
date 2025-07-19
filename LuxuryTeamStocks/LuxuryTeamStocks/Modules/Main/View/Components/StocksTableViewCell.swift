@@ -22,7 +22,6 @@ final class StocksTableViewCell: UITableViewCell {
         return imageView
     }()
 
-
     private lazy var titleLabel = AppLabel(type: .title)
     private lazy var subTitleLabel = AppLabel(type: .subtitle)
     private lazy var isFavoriteImageView: UIImageView = {
@@ -88,7 +87,7 @@ extension StocksTableViewCell {
     }
 
     private func updateChangeStockPrice(with stock: StockModel) {
-        let changeText = "$\(stock.change) (\(abs(stock.changePercent))%)"
+        let changeText = "$\(abs(stock.change)) (\(abs(stock.changePercent))%)"
 
         if stock.change > 0 {
             rateChangeLabel.textColor = AppConstants.Colors.green
@@ -96,7 +95,6 @@ extension StocksTableViewCell {
         } else {
             rateChangeLabel.textColor = AppConstants.Colors.red
             rateChangeLabel.text = "-\(changeText)"
-
         }
 
     }

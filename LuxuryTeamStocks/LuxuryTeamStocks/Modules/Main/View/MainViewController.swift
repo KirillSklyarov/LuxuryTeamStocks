@@ -48,6 +48,7 @@ final class MainViewController: UIViewController {
         view.backgroundColor = .systemBackground
         configureContentStackView()
         configureActivityIndicator()
+        setupAction()
     }
 
     func configureContentStackView() {
@@ -55,6 +56,12 @@ final class MainViewController: UIViewController {
 
         view.addSubviews(contentTableView)
         contentTableView.setConstraints(isSafeArea: true, allInsets: 20)
+    }
+
+    func setupAction() {
+        contentTableView.tabSelected = { [weak self] tag in
+            self?.viewModel.tabSelected(tag)
+        }
     }
 
 //    func categoryStackConfigure() {
@@ -93,7 +100,7 @@ final class MainViewController: UIViewController {
 //        }
     }
 
-    func configure(with data: [StockModel]) {
+    func configure(with data: [StockModel], _ isFavoritesChosen: Bool) {
         print(#function)
 
         DispatchQueue.main.async { [weak self] in
@@ -103,12 +110,12 @@ final class MainViewController: UIViewController {
 
 //        isHideContent(false)
         activityIndicator.stopAnimating()
-        updateUI(with: data)
+        updateUI(with: data, isFavoritesChosen: isFavoritesChosen)
     }
 
-    func updateUI(with data: [StockModel]) {
+    func updateUI(with data: [StockModel], isFavoritesChosen: Bool) {
         print(#function)
-        contentTableView.updateUI(with: data)
+        contentTableView.updateUI(with: data, isFavoriteChosen: isFavoritesChosen)
     }
 
 }
@@ -124,30 +131,3 @@ extension MainViewController {
         present(alert, animated: true)
     }
 }
-
-//MARK: - SwiftUI
-import SwiftUI
-struct MyProvider : PreviewProvider {
-    static var previews: some View {
-        ContainterView().edgesIgnoringSafeArea(.all)
-    }
-
-    struct ContainterView: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> UIViewController {
-            return MainViewController(viewModel: MainViewModel())
-        }
-
-        typealias UIViewControllerType = UIViewController
-
-
-        let viewController = MainViewController(viewModel: MainViewModel())
-        func makeUIViewController(context: UIViewControllerRepresentableContext<MyProvider.ContainterView>) -> MainViewController {
-            return viewController
-        }
-
-        func updateUIViewController(_ uiViewController: MyProvider.ContainterView.UIViewControllerType, context: UIViewControllerRepresentableContext<MyProvider.ContainterView>) {
-
-        }
-    }
-}
-

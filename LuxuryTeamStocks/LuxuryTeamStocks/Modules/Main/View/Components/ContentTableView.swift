@@ -12,11 +12,10 @@ final class StocksTableView: UITableView {
     private var chosenCell: StocksTableViewCell?
     private var data: [StockModel]?
 
-    var onShowShareScreen: ((UIActivityViewController) -> Void)?
-//    var onEditScreen: ((TDLItem) -> Void)?
-//    var onRemoveItem: ((TDLItem) -> Void)?
-//    var onChangeTDLState: ((TDLItem) -> Void)?
+    private var isFavoriteChosen: Bool = true
+
     var onGetFilteredData: ((String) -> Void)?
+    var tabSelected: ((Int) -> Void)?
 
     // MARK: - Init
     override init(frame: CGRect, style: UITableView.Style) {
@@ -26,6 +25,10 @@ final class StocksTableView: UITableView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func setIsFavoriteChosen(_ isFavoriteChosen: Bool) {
+        self.isFavoriteChosen = isFavoriteChosen
     }
 
 //    func getData(_ data: [StockModel], animated: Bool = true) {
@@ -39,8 +42,9 @@ final class StocksTableView: UITableView {
         onGetFilteredData?(text)
     }
 
-    func updateUI(with data: [StockModel]) {
+    func updateUI(with data: [StockModel], isFavoriteChosen: Bool) {
         self.data = data
+        setIsFavoriteChosen(isFavoriteChosen)
         reloadData()
     }
 }
@@ -88,7 +92,7 @@ extension StocksTableView: UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        configureTableViewHeader()
+        configureTableViewHeader(isFavoriteChosen)
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -98,9 +102,9 @@ extension StocksTableView: UITableViewDataSource, UITableViewDelegate {
 
 // MARK: - Supporting methods
 private extension StocksTableView {
-    func configureTableViewHeader() -> UIView {
-        let stockButton = AppButton(style: .stocks, isSelected: true)
-        let favoriteButton = AppButton(style: .favourite)
+    func configureTableViewHeader(_ isFavoriteChosen: Bool) -> UIView {
+        let stockButton = AppButton(style: .stocks, isSelected: !isFavoriteChosen)
+        let favoriteButton = AppButton(style: .favourite, isSelected: isFavoriteChosen)
 
         let categoriesStackView = AppStackView([stockButton, favoriteButton, UIView()], axis: .horizontal, spacing: 20)
 
@@ -110,92 +114,16 @@ private extension StocksTableView {
         stockButton.onButtonTapped = { [weak self] tag in
             stockButton.applySelectedStyle(true)
             favoriteButton.applySelectedStyle(false)
-            print(tag)
+            self?.tabSelected?(tag)
         }
 
         favoriteButton.onButtonTapped = { [weak self] tag in
             stockButton.applySelectedStyle(false)
             favoriteButton.applySelectedStyle(true)
             print(tag)
+            self?.tabSelected?(tag)
         }
 
         return categoriesStackView
     }
-
-//    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-//        guard let cell = tableView.cellForRow(at: indexPath) as? TaskTableViewCell else { return nil }
-//        cell.isHideCheckmarkView(true)
-//        chosenCell = cell
-//
-//        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-//
-//            let editAction = UIAction(title: AppConstants.L.edit(), image: AppConstants.SystemImages.edit) { [weak self] _ in
-//                self?.editTask(at: indexPath)
-//            }
-//
-//            let shareAction = UIAction(title: AppConstants.L.share(), image: AppConstants.SystemImages.share) { [weak self] _ in
-//                self?.shareTask(at: indexPath)
-//            }
-//
-//            let deleteAction = UIAction(title: AppConstants.L.delete(), image: AppConstants.SystemImages.delete, attributes: .destructive) { [weak self] _ in
-//                self?.deleteTask(at: indexPath)
-//            }
-//
-//            return UIMenu(title: "", children: [editAction, shareAction, deleteAction])
-//        }
-//    }
-
-    // Показываем вью после закрытия меню
-//    func tableView(_ tableView: UITableView, willEndContextMenuInteraction configuration: UIContextMenuConfiguration, animator: (any UIContextMenuInteractionAnimating)?) {
-//        chosenCell?.isHideCheckmarkView(false)
-//        chosenCell = nil
-//    }
 }
-
-// MARK: - Menu actions
-//private extension TasksTableView {
-//    func editTask(at indexPath: IndexPath) {
-//        guard let task = data?[indexPath.row] else { print("We have problem with indexPath"); return }
-//        onEditScreen?(task)
-//    }
-//
-//    func shareTask(at indexPath: IndexPath) {
-//        guard let task = data?[indexPath.row] else { print("We have problem with indexPath"); return }
-//        let textToShare = AppConstants.L.shareTask(task.title, task.subtitle)
-//        let activityVC = UIActivityViewController(activityItems: [textToShare], applicationActivities: nil)
-//        onShowShareScreen?(activityVC)
-//    }
-//
-//    func deleteTask(at indexPath: IndexPath) {
-//        guard let task = data?[indexPath.row] else { print("We have problem with indexPath"); return }
-//        onRemoveItem?(task)
-//    }
-//}
-
-
-// MARK: - Supporting methods
-//private extension TasksTableView {
-//    func removeRowsOrUpdateCells(_ indexes: [IndexPath]) {
-//        if !indexes.isEmpty {
-//            removeRows(indexes)
-//        } else {
-//            reloadData()
-//        }
-//    }
-//
-//    func getIndexesOfDeletedItems(_ newData: [TDLItem]) -> [IndexPath] {
-//        let oldData = self.data ?? []
-//        self.data = newData
-//
-//        let deletedIndexes = oldData.enumerated().compactMap { (index, item) -> IndexPath? in
-//            return newData.contains(where: { $0.id == item.id }) ? nil : IndexPath(row: index, section: 0)
-//        }
-//        return deletedIndexes
-//    }
-//
-//     func removeRows(_ deletedIndexes: [IndexPath]) {
-//        beginUpdates()
-//        deleteRows(at: deletedIndexes, with: .automatic)
-//        endUpdates()
-//    }
-//}
