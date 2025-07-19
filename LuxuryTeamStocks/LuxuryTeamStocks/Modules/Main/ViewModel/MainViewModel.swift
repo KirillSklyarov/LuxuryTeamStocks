@@ -96,11 +96,4 @@ final class MainViewModel: MainViewModelling {
             data[index].isFavorite.toggle()
         }
     }
-
-//    private func findIndexPath(of stock: StockModel) -> IndexPath? {
-//        guard let index = displayData.firstIndex(of: stock) else {
-//            return nil
-//        }
-//        return IndexPath(row: index, section: 0)
-//    }
 }
