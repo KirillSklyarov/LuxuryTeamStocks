@@ -8,13 +8,14 @@
 
 import Foundation
 
-struct StockModel: Codable {
+struct StockModel: Codable, Equatable {
     let symbol: String
     let name: String
     let price: Double
     let change: Double
     let changePercent: Double
     let logo: String
+    var isFavorite: Bool = false
 }
 
 let mockData: [StockModel] = [

@@ -21,6 +21,8 @@ final class MainViewController: UIViewController {
 
     private lazy var activityIndicator = AppActivityIndicator()
 
+    var onAddToFavButtonTapped: ((StockModel) -> Void)?
+
     let viewModel: MainViewModelling
 
     // MARK: - Init
@@ -62,12 +64,11 @@ final class MainViewController: UIViewController {
         contentTableView.tabSelected = { [weak self] tag in
             self?.viewModel.tabSelected(tag)
         }
-    }
 
-//    func categoryStackConfigure() {
-//        stockCategory.text = "Stocks"
-//        favoriteCategory.text = "Favorites"
-//    }
+        contentTableView.onAddToFavButtonTapped = { [weak self] stock in
+            self?.viewModel.addOrRemoveFromFavorites(stock)
+        }
+    }
 
     func configureActivityIndicator() {
         view.addSubviews(activityIndicator)
@@ -101,7 +102,7 @@ final class MainViewController: UIViewController {
     }
 
     func configure(with data: [StockModel], _ isFavoritesChosen: Bool) {
-        print(#function)
+//        print(#function)
 
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
@@ -114,12 +115,13 @@ final class MainViewController: UIViewController {
     }
 
     func updateUI(with data: [StockModel], isFavoritesChosen: Bool) {
-        print(#function)
+//        print(#function)
         contentTableView.updateUI(with: data, isFavoriteChosen: isFavoritesChosen)
     }
 
 }
 
+// MARK: - Error handler
 extension MainViewController {
     func showError() {
         activityIndicator.stopAnimating()
@@ -131,3 +133,8 @@ extension MainViewController {
         present(alert, animated: true)
     }
 }
+
+//    func categoryStackConfigure() {
+//        stockCategory.text = "Stocks"
+//        favoriteCategory.text = "Favorites"
+//    }

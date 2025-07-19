@@ -10,22 +10,50 @@ import Foundation
 protocol MainViewModelling: AnyObject {
     func viewLoaded()
     func tabSelected(_ index: Int)
+    func addOrRemoveFromFavorites(_ stock: StockModel)
 }
 
 final class MainViewModel: MainViewModelling {
 
     private var data: [StockModel] = []
-    private var favourites: [StockModel] = []
+    private var favorites: [StockModel] = []
     private var displayData: [StockModel] = []
 
     private var isFavoritesChosen = false
 
+    private var userDefaults = UDManager.shared
+
     weak var view: MainViewController?
 
+    init() {
+        getFavoritesFromUD()
+    }
+
     func viewLoaded() {
-        print(#function)
+//        print(#function)
         view?.setupInitialState()
         loadData()
+    }
+
+    private func mappingMockData() {
+        let favSymbols = Set(favorites.map { $0.symbol })
+        self.data = mockData.map { stock in
+            var copy = stock
+            copy.isFavorite = favSymbols.contains(stock.symbol)
+            return copy
+        }
+    }
+
+    func loadData() {
+        view?.loading()
+        mappingMockData()
+//        getFavoritesFromUD()
+        checkDataAndUpdateView()
+    }
+
+    private func getFavoritesFromUD() {
+        self.favorites = userDefaults.loadFavouritesFromUD()
+        //        print(favourites)
     }
 
     func tabSelected(_ index: Int) {
@@ -33,17 +61,10 @@ final class MainViewModel: MainViewModelling {
             displayData = data
             isFavoritesChosen = false
         } else if index == 1 {
-            displayData = [data.first!]
+            displayData = data.filter { $0.isFavorite }
             isFavoritesChosen = true
         }
         view?.configure(with: displayData, isFavoritesChosen)
-    }
-
-    func loadData() {
-        view?.loading()
-        self.data = mockData
-//        print(data)
-        checkDataAndUpdateView()
     }
 
     func checkDataAndUpdateView() {
@@ -55,7 +76,7 @@ final class MainViewModel: MainViewModelling {
     }
 
     func updateView() {
-        print(#function)
+//        print(#function)
         view?.configure(with: data, isFavoritesChosen)
     }
 
@@ -65,12 +86,16 @@ final class MainViewModel: MainViewModelling {
         }
     }
 
-
-
-
-
-
-
-
-
+    func addOrRemoveFromFavorites(_ stock: StockModel) {
+        if !stock.isFavorite {
+            if let index = data.firstIndex(of: stock) {
+                data[index].isFavorite = true
+            }
+        } else {
+            if let index = data.firstIndex(of: stock) {
+                data[index].isFavorite = false
+            }
+        }
+        updateView()
+    }
 }

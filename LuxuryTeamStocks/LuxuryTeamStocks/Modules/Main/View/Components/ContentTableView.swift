@@ -16,6 +16,7 @@ final class StocksTableView: UITableView {
 
     var onGetFilteredData: ((String) -> Void)?
     var tabSelected: ((Int) -> Void)?
+    var onAddToFavButtonTapped: ((StockModel) -> Void)?
 
     // MARK: - Init
     override init(frame: CGRect, style: UITableView.Style) {
@@ -66,6 +67,13 @@ private extension StocksTableView {
     }
 }
 
+// MARK: - Setup Actions
+//private extension StocksTableView {
+//    func setupAction() {
+//
+//    }
+//}
+
 // MARK: - UITableViewDataSource, UITableViewDelegate
 extension StocksTableView: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -84,9 +92,9 @@ extension StocksTableView: UITableViewDataSource, UITableViewDelegate {
         }
 
 
-        //        cell.onTaskStateChanged = { [weak self] in
-        //            self?.onChangeTDLState?(item)
-        //        }
+        cell.onAddToFavButtonTapped = { [weak self] in
+            self?.onAddToFavButtonTapped?(stockItem)
+        }
 
         return cell
     }
@@ -120,7 +128,7 @@ private extension StocksTableView {
         favoriteButton.onButtonTapped = { [weak self] tag in
             stockButton.applySelectedStyle(false)
             favoriteButton.applySelectedStyle(true)
-            print(tag)
+//            print(tag)
             self?.tabSelected?(tag)
         }
 

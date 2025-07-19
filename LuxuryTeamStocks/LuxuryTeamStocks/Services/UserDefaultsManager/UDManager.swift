@@ -7,18 +7,26 @@
 
 import Foundation
 
-final class UDManager {
+protocol UDManagerProtocol {
+    func addToFavorites(_ stock: StockModel)
+    func removeFromFavorites(_ stock: StockModel)
+    func loadFavouritesFromUD() -> [StockModel]
+}
+
+final class UDManager: UDManagerProtocol {
 
     static let shared = UDManager()
-    private let defaults = UserDefaults.standard
-
     private init() {}
 
+    private let defaults = UserDefaults.standard
+
+    // MARK: - CRUD
     func addToFavorites(_ stock: StockModel) {
         var favourites = loadFavouritesFromUD()
 
         if !favourites.contains(where: { $0.symbol == stock.symbol }) {
             favourites.append(stock)
+            print("✅ Added to favourites")
         }
 
         saveFavouritesToUD(favourites)
@@ -28,13 +36,11 @@ final class UDManager {
         var favourites = loadFavouritesFromUD()
 
         favourites.removeAll(where: { $0.symbol == stock.symbol })
+        print("✅ Removed from favourites")
 
         saveFavouritesToUD(favourites)
     }
-}
 
-// MARK: - Supporting methods
-private extension UDManager {
     func loadFavouritesFromUD() -> [StockModel] {
         var favourites: [StockModel] = []
         if let savedData = defaults.data(forKey: AppConstants.UserDefaultsKeys.favourites),
@@ -43,10 +49,14 @@ private extension UDManager {
         }
         return favourites
     }
+}
 
+// MARK: - Supporting methods
+private extension UDManager {
     func saveFavouritesToUD(_ data: [StockModel]) {
         if let newData = try? JSONEncoder().encode(data) {
             defaults.set(newData, forKey: AppConstants.UserDefaultsKeys.favourites)
+            print("✅ Saved to UD")
         }
     }
 }

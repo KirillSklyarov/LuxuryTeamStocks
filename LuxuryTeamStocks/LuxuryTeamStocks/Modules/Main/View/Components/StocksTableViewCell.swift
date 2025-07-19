@@ -24,19 +24,13 @@ final class StocksTableViewCell: UITableViewCell {
 
     private lazy var titleLabel = AppLabel(type: .title)
     private lazy var subTitleLabel = AppLabel(type: .subtitle)
-    private lazy var isFavoriteImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.heightAnchor.constraint(equalToConstant: 16).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 16).isActive = true
-        return imageView
-    }()
+
+    private lazy var addToFavoriteButton = AddToFavButton()
 
     private lazy var rateLabel = AppLabel(type: .rate)
     private lazy var rateChangeLabel = AppLabel(type: .rateChange)
 
-    private lazy var isFavoriteTextStack = AppStackView([titleLabel, isFavoriteImageView, UIView()], axis: .horizontal, spacing: 6)
+    private lazy var isFavoriteTextStack = AppStackView([titleLabel, addToFavoriteButton, UIView()], axis: .horizontal, spacing: 6)
 
     private lazy var textStack = AppStackView([isFavoriteTextStack, subTitleLabel], axis: .vertical, spacing: 5, alignment: .leading)
 
@@ -44,7 +38,7 @@ final class StocksTableViewCell: UITableViewCell {
 
     private lazy var contentStack = AppStackView([logoImageView, textStack, rateStack], axis: .horizontal, spacing: 12, alignment: .center)
 
-    var onTaskStateChanged: (() -> Void)?
+    var onAddToFavButtonTapped: (() -> Void)?
 
     private lazy var cellContainer: UIView = {
         let view = UIView()
@@ -73,7 +67,9 @@ extension StocksTableViewCell {
         logoImageView.sd_setImage(with: URL(string: stock.logo))
         titleLabel.text = stock.symbol
         subTitleLabel.text = stock.name
-        isFavoriteImageView.image = UIImage(named: "StarGray")
+
+        updateFavoriteButtonImage(stock)
+
         rateLabel.text = "$\(stock.price.cleanString)"
         updateChangeStockPrice(with: stock)
 
@@ -84,6 +80,15 @@ extension StocksTableViewCell {
 
 //        checkView.setState(stock.completed)
 //        designCell(stock.completed)
+    }
+
+    private func updateFavoriteButtonImage(_ stock: StockModel) {
+        switch stock.isFavorite {
+        case true:
+            addToFavoriteButton.setImage(UIImage(named: "starGold"), for: .normal)
+        case false:
+            addToFavoriteButton.setImage(UIImage(named: "starGray"), for: .normal)
+        }
     }
 
     private func updateChangeStockPrice(with stock: StockModel) {
@@ -122,24 +127,23 @@ private extension StocksTableViewCell {
             right: AppConstants.Insets.large12
         )
         )
-
-//        NSLayoutConstraint.activate([
-//            contentStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: AppConstants.Insets.small),
-//            contentStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-//            contentStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-//            contentStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -AppConstants.Insets.small)
-//        ])
     }
 }
 
 // MARK: - Setup Action
 private extension StocksTableViewCell {
     func setupAction() {
+        addToFavoriteButton.onAddToFavButtonTapped = { [weak self] in
+            self?.onAddToFavButtonTapped?()
+        }
+    }
+}
+
 //        checkView.onDoneButtonTapped = { [weak self] isDone in
 //            self?.designCell(isDone)
 //            self?.onTaskStateChanged?()
 //        }
-    }
+//    }
 
 //    func designCell(_ isDone: Bool) {
 //        isDone ? designDoneTaskCell() : designUndoneTaskCell()
@@ -160,4 +164,4 @@ private extension StocksTableViewCell {
 //        titleLabel.attributedText = nil
 //        titleLabel.text = titleTextHere
 //    }
-}
+//}

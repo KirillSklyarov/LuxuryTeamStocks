@@ -26,7 +26,7 @@ final class AppButton: UIButton {
     }
 
     func applySelectedStyle(_ isSelected: Bool) {
-        print(#function, isSelected)
+//        print(#function, isSelected)
         if isSelected {
             setTitleColor(.black, for: .normal)
             titleLabel?.font = AppConstants.Fonts.headline
@@ -59,16 +59,3 @@ private extension AppButton {
         onButtonTapped?(sender.tag)
     }
 }
-
-//    func setupSaveButton(type: AppButtonStyle = .save) {
-//        var config = UIButton.Configuration.plain()
-//        config.title = AppConstants.L.save()
-//        config.baseForegroundColor = AppConstants.Colors.yellow
-//        config.baseBackgroundColor = .systemBackground
-//        config.cornerStyle = .capsule
-//        config.background.strokeWidth = 1
-//        isEnabled = false
-//        config.background.strokeColor = AppConstants.Colors.gray
-//        configuration = config
-//    }
-//}
