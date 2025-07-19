@@ -47,6 +47,7 @@ private extension AppLabel {
         case .rateChange:
             font = AppConstants.Fonts.body
             textColor = AppConstants.Colors.black
+            textAlignment = .right
         }
         self.numberOfLines = numberOfLines
     }

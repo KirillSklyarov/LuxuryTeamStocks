@@ -11,26 +11,50 @@ import SDWebImage
 final class StocksTableViewCell: UITableViewCell {
 
     // MARK: - UI Properties
-    private lazy var logoImageView = UIImageView()
+    private lazy var logoImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.heightAnchor.constraint(equalToConstant: 52).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 52).isActive = true
+        imageView.layer.cornerRadius = AppConstants.CornerRadius.medium
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+
+
     private lazy var titleLabel = AppLabel(type: .title)
     private lazy var subTitleLabel = AppLabel(type: .subtitle)
-    private lazy var isFavoriteImageView = UIImageView()
+    private lazy var isFavoriteImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.heightAnchor.constraint(equalToConstant: 16).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 16).isActive = true
+        return imageView
+    }()
+
     private lazy var rateLabel = AppLabel(type: .rate)
     private lazy var rateChangeLabel = AppLabel(type: .rateChange)
-    private lazy var rateChangePercentLabel = AppLabel(type: .rateChange)
 
-    private lazy var isFavoriteTextStack = AppStackView([titleLabel, isFavoriteImageView], axis: .horizontal, spacing: 6)
+    private lazy var isFavoriteTextStack = AppStackView([titleLabel, isFavoriteImageView, UIView()], axis: .horizontal, spacing: 6)
 
-    private lazy var textStack = AppStackView([isFavoriteTextStack, subTitleLabel], axis: .vertical)
+    private lazy var textStack = AppStackView([isFavoriteTextStack, subTitleLabel], axis: .vertical, spacing: 5, alignment: .leading)
 
-    private lazy var rateChangeStack = AppStackView([rateChangeLabel, rateChangePercentLabel], axis: .horizontal, spacing: 5)
+    private lazy var rateStack = AppStackView([rateLabel, rateChangeLabel], axis: .vertical, alignment: .trailing)
 
-    private lazy var rateStack = AppStackView([rateLabel, rateChangeStack], axis: .vertical)
+    private lazy var contentStack = AppStackView([logoImageView, textStack, rateStack], axis: .horizontal, spacing: 12, alignment: .center)
 
-    private lazy var contentStack = AppStackView([logoImageView, textStack, rateStack], axis: .horizontal, spacing: 12)
-
-//    private var titleTextHere = ""
     var onTaskStateChanged: (() -> Void)?
+
+    private lazy var cellContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = AppConstants.Colors.gray
+        view.layer.cornerRadius = AppConstants.CornerRadius.medium
+        view.clipsToBounds = true
+        return view
+    }()
 
     // MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -46,17 +70,35 @@ final class StocksTableViewCell: UITableViewCell {
 
 // MARK: - Public methods
 extension StocksTableViewCell {
-    func configureCell(with stock: StockModel) {
+    func configureCell(with stock: StockModel, isGray: Bool = false) {
         logoImageView.sd_setImage(with: URL(string: stock.logo))
-        titleLabel.text = stock.name
+        titleLabel.text = stock.symbol
         subTitleLabel.text = stock.name
-        isFavoriteImageView.image = UIImage(named: "starGray")
-        rateLabel.text = "$ \(stock.price)"
-        rateChangeLabel.text = "+$ \(stock.change)"
-        rateChangePercentLabel.text = "\(stock.changePercent)%"
+        isFavoriteImageView.image = UIImage(named: "StarGray")
+        rateLabel.text = "$ \(stock.price.cleanString)"
+        updateChangeStockPrice(with: stock)
+
+        cellContainer.backgroundColor = isGray ? AppConstants.Colors.gray : .clear
+
+//        rateChangePercentLabel.backgroundColor = .red
+//        rateChangeStack.setBorder(borderWidth: 1)
 
 //        checkView.setState(stock.completed)
 //        designCell(stock.completed)
+    }
+
+    private func updateChangeStockPrice(with stock: StockModel) {
+        let changeText = "$\(stock.change) (\(stock.changePercent)%)"
+
+        if stock.change > 0 {
+            rateChangeLabel.textColor = AppConstants.Colors.red
+            rateChangeLabel.text = "+\(changeText)"
+        } else {
+            rateChangeLabel.textColor = AppConstants.Colors.green
+            rateChangeLabel.text = "-\(changeText)"
+
+        }
+
     }
 
 //    func isHideCheckmarkView(_ bool: Bool) {
@@ -67,13 +109,21 @@ extension StocksTableViewCell {
 // MARK: - Configure cell
 private extension StocksTableViewCell {
     func setupCell() {
-//        backgroundColor = AppConstants.Colors.black
-        contentView.addSubviews(contentStack)
+        contentView.addSubviews(cellContainer)
+
+        cellContainer.addSubviews(contentStack)
         setupLayout()
     }
 
     func setupLayout() {
-        contentStack.setConstraints(allInsets: AppConstants.Insets.small)
+        cellContainer.setConstraints(insets: .init(top: AppConstants.Insets.small4, left: 0, bottom: AppConstants.Insets.small4, right: 0))
+        contentStack.setConstraints(insets: .init(
+            top: AppConstants.Insets.medium8,
+            left: AppConstants.Insets.medium8,
+            bottom: AppConstants.Insets.medium8,
+            right: AppConstants.Insets.large12
+        )
+        )
 
 //        NSLayoutConstraint.activate([
 //            contentStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: AppConstants.Insets.small),

@@ -38,6 +38,11 @@ final class StocksTableView: UITableView {
     func filterData(by text: String) {
         onGetFilteredData?(text)
     }
+
+    func updateUI(with data: [StockModel]) {
+        self.data = data
+        reloadData()
+    }
 }
 
 // MARK: - Setup UI
@@ -47,8 +52,7 @@ private extension StocksTableView {
         backgroundColor = .clear
         allowsSelection = false
         separatorStyle = .none
-//        separatorColor = AppConstants.Colors.darkGray
-//        estimatedRowHeight = 90/800
+        estimatedRowHeight = 70/874
         rowHeight = UITableView.automaticDimension
         tableHeaderView = UIView()
 
@@ -67,10 +71,15 @@ extension StocksTableView: UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueCell(indexPath) as StocksTableViewCell
-        let item = data?[indexPath.row]
+        let stockItem = data?[indexPath.row]
 
-        guard let item else { return cell }
-        cell.configureCell(with: item)
+        guard let stockItem else { return cell }
+        if !indexPath.row.isMultiple(of: 2) {
+            cell.configureCell(with: stockItem, isGray: true)
+        } else {
+            cell.configureCell(with: stockItem)
+        }
+
 
 //        cell.onTaskStateChanged = { [weak self] in
 //            self?.onChangeTDLState?(item)

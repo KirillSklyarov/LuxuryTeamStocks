@@ -29,14 +29,23 @@ struct AppConstants {
     }
 
     enum Insets {
-        static let small: CGFloat = 8
-        static let medium: CGFloat = 20
+        static let small4: CGFloat = 4
+        static let medium8: CGFloat = 8
+        static let large12: CGFloat = 12
+    }
+
+    enum CornerRadius {
+        static let medium: CGFloat = 16
     }
 
     enum Fonts {
         static let headline = UIFont(name: "Montserrat-Bold", size: 28)
         static let regular = UIFont(name: "Montserrat-Bold", size: 18)
-        static let body = UIFont(name: "Montserrat-SemiBold", size: 16)
+        static let body = UIFont(name: "Montserrat-SemiBold", size: 11)
+    }
+
+    enum alertsError {
+        static let loadingError = "Ошибка загрузки данных"
     }
 
     enum Height {

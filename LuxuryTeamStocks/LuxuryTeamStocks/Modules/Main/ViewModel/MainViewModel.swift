@@ -18,15 +18,40 @@ final class MainViewModel: MainViewModelling {
     weak var view: MainViewController?
 
     func viewLoaded() {
+        print(#function)
         view?.setupInitialState()
         loadData()
-        print(#function)
     }
 
     func loadData() {
         view?.loading()
         self.data = mockData
+        print(data)
+        checkDataAndUpdateView()
     }
+
+    func checkDataAndUpdateView() {
+        isDataValid() ? updateView() : getError()
+    }
+
+    func isDataValid() -> Bool {
+        return !data.isEmpty
+    }
+
+    func updateView() {
+        print(#function)
+        view?.configure(with: data)
+    }
+
+    func getError() {
+        DispatchQueue.main.async { [weak self] in
+            self?.view?.showError()
+        }
+    }
+
+
+
+
 
 
 

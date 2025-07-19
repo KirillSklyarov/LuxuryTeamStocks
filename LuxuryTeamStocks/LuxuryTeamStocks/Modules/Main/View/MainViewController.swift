@@ -45,7 +45,7 @@ final class MainViewController: UIViewController {
     }
 
     func configureUI() {
-        view.backgroundColor = .systemRed
+        view.backgroundColor = .systemBackground
         configureContentStackView()
         configureActivityIndicator()
     }
@@ -84,6 +84,7 @@ final class MainViewController: UIViewController {
 
     func isHideContent(_ isHide: Bool) {
         contentStackView.alpha = isHide ? 0 : 1
+
 //        switch isHide {
 //        case true:
 //            contentStackView.alpha = 0
@@ -92,6 +93,36 @@ final class MainViewController: UIViewController {
 //        }
     }
 
+    func configure(with data: [StockModel]) {
+        print(#function)
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            isHideContent(false)
+        }
+
+//        isHideContent(false)
+        activityIndicator.stopAnimating()
+        updateUI(with: data)
+    }
+
+    func updateUI(with data: [StockModel]) {
+        print(#function)
+        contentTableView.updateUI(with: data)
+    }
+
+}
+
+extension MainViewController {
+    func showError() {
+        activityIndicator.stopAnimating()
+        showAlert()
+    }
+
+    private func showAlert() {
+        let alert = AppAlert.create()
+        present(alert, animated: true)
+    }
 }
 
 //MARK: - SwiftUI
