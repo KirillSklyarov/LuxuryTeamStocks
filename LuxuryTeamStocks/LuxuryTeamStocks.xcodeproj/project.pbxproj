@@ -15,9 +15,22 @@
 		73751F122E2B97350057595D /* LuxuryTeamStocks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LuxuryTeamStocks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		733782492E2BE19900205CF0 /* Exceptions for "LuxuryTeamStocks" folder in "LuxuryTeamStocks" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Resources/Info.plist,
+			);
+			target = 73751F112E2B97350057595D /* LuxuryTeamStocks */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		73751F142E2B97350057595D /* LuxuryTeamStocks */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				733782492E2BE19900205CF0 /* Exceptions for "LuxuryTeamStocks" folder in "LuxuryTeamStocks" target */,
+			);
 			path = LuxuryTeamStocks;
 			sourceTree = "<group>";
 		};
