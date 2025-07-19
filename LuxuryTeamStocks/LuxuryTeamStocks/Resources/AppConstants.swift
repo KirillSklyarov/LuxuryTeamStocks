@@ -1,0 +1,45 @@
+//
+//  AppConstants.swift
+//  LuxuryTeamStocks
+//
+//  Created by Kirill Sklyarov on 19.07.2025.
+//
+
+import UIKit
+
+struct AppConstants {
+
+    enum SystemImages {
+        static let starGray = UIImage(named: "starGray")
+        static let starGold = UIImage(named: "starGold")
+
+        static let share = UIImage(systemName: "square.and.arrow.up")
+        static let delete = UIImage(systemName: "trash")
+        static let microphone = UIImage(systemName: "microphone.fill")
+        static let taskCompleted = UIImage(systemName: "checkmark.circle")
+        static let taskNotCompleted = UIImage(systemName: "circle")
+    }
+
+    enum Colors {
+        static let black = UIColor(hex: "1A1A1A")
+//        static let white = UIColor(hex: "F4F4F4")
+        static let gray = UIColor(hex: "F0F4F7")
+        static let green = UIColor(hex: "24B25D")
+        static let red = UIColor(hex: "B22424")
+    }
+
+    enum Insets {
+        static let small: CGFloat = 8
+        static let medium: CGFloat = 20
+    }
+
+    enum Fonts {
+        static let headline = UIFont(name: "Montserrat-Bold", size: 28)
+        static let regular = UIFont(name: "Montserrat-Bold", size: 18)
+        static let body = UIFont(name: "Montserrat-SemiBold", size: 16)
+    }
+
+    enum Height {
+        static let textField: CGFloat = 50
+    }
+}
