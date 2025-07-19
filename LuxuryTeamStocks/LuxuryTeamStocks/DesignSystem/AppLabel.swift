@@ -18,7 +18,7 @@ enum AppLabelType {
 final class AppLabel: UILabel {
 
     // MARK: - Init
-    init(type: AppLabelType, numberOfLines: Int = 0) {
+    init(type: AppLabelType, numberOfLines: Int = 1) {
         super.init(frame: .zero)
         configure(type, numberOfLines: numberOfLines)
     }
@@ -41,6 +41,7 @@ private extension AppLabel {
         case .subtitle:
             font = AppConstants.Fonts.body
             textColor = AppConstants.Colors.black
+            self.numberOfLines = numberOfLines
         case .rate:
             font = AppConstants.Fonts.regular
             textColor = AppConstants.Colors.black

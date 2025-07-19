@@ -47,7 +47,6 @@ final class MainViewModel: MainViewModelling {
     func loadData() {
         view?.loading()
         mappingMockData()
-//        getFavoritesFromUD()
         checkDataAndUpdateView()
     }
 
@@ -75,9 +74,10 @@ final class MainViewModel: MainViewModelling {
         return !data.isEmpty
     }
 
-    func updateView() {
-//        print(#function)
-        view?.configure(with: data, isFavoritesChosen)
+    private func updateView(animate: Bool = true) {
+        let fav = data.filter { $0.isFavorite }
+        displayData = isFavoritesChosen ? fav : data
+        view?.configure(with: displayData, isFavoritesChosen, animate: animate)
     }
 
     func getError() {
@@ -87,15 +87,20 @@ final class MainViewModel: MainViewModelling {
     }
 
     func addOrRemoveFromFavorites(_ stock: StockModel) {
-        if !stock.isFavorite {
-            if let index = data.firstIndex(of: stock) {
-                data[index].isFavorite = true
-            }
-        } else {
-            if let index = data.firstIndex(of: stock) {
-                data[index].isFavorite = false
-            }
-        }
-        updateView()
+        modifyData(with: stock)
+        updateView(animate: false)
     }
+
+    private func modifyData(with stock: StockModel) {
+        if let index = data.firstIndex(of: stock) {
+            data[index].isFavorite.toggle()
+        }
+    }
+
+//    private func findIndexPath(of stock: StockModel) -> IndexPath? {
+//        guard let index = displayData.firstIndex(of: stock) else {
+//            return nil
+//        }
+//        return IndexPath(row: index, section: 0)
+//    }
 }

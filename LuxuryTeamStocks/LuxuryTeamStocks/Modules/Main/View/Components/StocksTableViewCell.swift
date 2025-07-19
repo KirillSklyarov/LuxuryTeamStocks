@@ -63,7 +63,7 @@ final class StocksTableViewCell: UITableViewCell {
 
 // MARK: - Public methods
 extension StocksTableViewCell {
-    func configureCell(with stock: StockModel, isGray: Bool = false) {
+    func configureCell(with stock: StockModel, isGray: Bool) {
         logoImageView.sd_setImage(with: URL(string: stock.logo))
         titleLabel.text = stock.symbol
         subTitleLabel.text = stock.name
@@ -74,21 +74,11 @@ extension StocksTableViewCell {
         updateChangeStockPrice(with: stock)
 
         cellContainer.backgroundColor = isGray ? AppConstants.Colors.brightGray : .clear
-
-//        rateChangePercentLabel.backgroundColor = .red
-//        rateChangeStack.setBorder(borderWidth: 1)
-
-//        checkView.setState(stock.completed)
-//        designCell(stock.completed)
     }
 
     private func updateFavoriteButtonImage(_ stock: StockModel) {
-        switch stock.isFavorite {
-        case true:
-            addToFavoriteButton.setImage(UIImage(named: "starGold"), for: .normal)
-        case false:
-            addToFavoriteButton.setImage(UIImage(named: "starGray"), for: .normal)
-        }
+        let image = stock.isFavorite ? "starGold" : "starGray"
+        addToFavoriteButton.setImage(UIImage(named: image), for: .normal)
     }
 
     private func updateChangeStockPrice(with stock: StockModel) {
@@ -138,30 +128,3 @@ private extension StocksTableViewCell {
         }
     }
 }
-
-//        checkView.onDoneButtonTapped = { [weak self] isDone in
-//            self?.designCell(isDone)
-//            self?.onTaskStateChanged?()
-//        }
-//    }
-
-//    func designCell(_ isDone: Bool) {
-//        isDone ? designDoneTaskCell() : designUndoneTaskCell()
-//    }
-
-//    func designDoneTaskCell() {
-//        titleLabel.textColor = AppConstants.Colors.gray
-//        subTitleLabel.textColor = AppConstants.Colors.gray
-//        let attributedString = NSAttributedString(
-//            string: titleTextHere,
-//            attributes: [.strikethroughStyle: NSUnderlineStyle.single.rawValue])
-//        titleLabel.attributedText = attributedString
-//    }
-
-//    func designUndoneTaskCell() {
-//        titleLabel.textColor = AppConstants.Colors.white
-//        subTitleLabel.textColor = AppConstants.Colors.white
-//        titleLabel.attributedText = nil
-//        titleLabel.text = titleTextHere
-//    }
-//}

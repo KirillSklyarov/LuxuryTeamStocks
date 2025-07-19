@@ -7,7 +7,14 @@
 
 import UIKit
 
+enum Section {
+    case main
+}
+
+
 final class StocksTableView: UITableView {
+
+    private var diffableDataSource: UITableViewDiffableDataSource<Section, StockModel>!
 
     private var chosenCell: StocksTableViewCell?
     private var data: [StockModel]?
@@ -32,21 +39,21 @@ final class StocksTableView: UITableView {
         self.isFavoriteChosen = isFavoriteChosen
     }
 
-//    func getData(_ data: [StockModel], animated: Bool = true) {
-//        if self.data != data {
-//            let deletedIndexes = getIndexesOfDeletedItems(data)
-//            removeRowsOrUpdateCells(deletedIndexes)
-//        }
-//    }
-
     func filterData(by text: String) {
         onGetFilteredData?(text)
     }
 
-    func updateUI(with data: [StockModel], isFavoriteChosen: Bool) {
-        self.data = data
-        setIsFavoriteChosen(isFavoriteChosen)
-        reloadData()
+    func updateUI(with data: [StockModel], isFavoriteChosen: Bool, animate: Bool = true) {
+        self.isFavoriteChosen = isFavoriteChosen
+        print("isFavoriteChosen \(self.isFavoriteChosen)")
+
+        var snapshot = NSDiffableDataSourceSnapshot<Section, StockModel>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(data, toSection: .main)
+
+        snapshot.reloadItems(data)
+
+        diffableDataSource.apply(snapshot, animatingDifferences: animate)
     }
 }
 
@@ -58,47 +65,31 @@ private extension StocksTableView {
         separatorStyle = .none
         registerCell(StocksTableViewCell.self)
 
-        dataSource = self
+        setupDataSource()
+
         delegate = self
+    }
 
-        //        estimatedRowHeight = 70/874
-        //        rowHeight = UITableView.automaticDimension
+    func setupDataSource() {
+        diffableDataSource = UITableViewDiffableDataSource<Section, StockModel>(tableView: self) { [weak self] tableView, indexPath, stock in
+            guard let self else { return UITableViewCell() }
+            let cell = tableView.dequeueCell(indexPath) as StocksTableViewCell
 
+
+            let isGray = designEvenAndOddRows(for: indexPath)
+            cell.configureCell(with: stock, isGray: isGray)
+
+            cell.onAddToFavButtonTapped = {
+                self.onAddToFavButtonTapped?(stock)
+            }
+
+            return cell
+        }
     }
 }
 
-// MARK: - Setup Actions
-//private extension StocksTableView {
-//    func setupAction() {
-//
-//    }
-//}
-
 // MARK: - UITableViewDataSource, UITableViewDelegate
-extension StocksTableView: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        data?.count ?? 0
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueCell(indexPath) as StocksTableViewCell
-        let stockItem = data?[indexPath.row]
-
-        guard let stockItem else { return cell }
-        if !indexPath.row.isMultiple(of: 2) {
-            cell.configureCell(with: stockItem, isGray: true)
-        } else {
-            cell.configureCell(with: stockItem)
-        }
-
-
-        cell.onAddToFavButtonTapped = { [weak self] in
-            self?.onAddToFavButtonTapped?(stockItem)
-        }
-
-        return cell
-    }
-
+extension StocksTableView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         configureTableViewHeader(isFavoriteChosen)
     }
@@ -134,4 +125,46 @@ private extension StocksTableView {
 
         return categoriesStackView
     }
+
+    func designEvenAndOddRows(for indexPath: IndexPath) -> Bool {
+        let isGray: Bool
+
+        if isFavoriteChosen {
+            isGray = indexPath.row.isMultiple(of: 2)
+        } else {
+            isGray = !indexPath.row.isMultiple(of: 2)
+        }
+        return isGray
+    }
 }
+
+// MARK: - Setup Actions
+//private extension StocksTableView {
+//    func setupAction() {
+//
+//    }
+//}
+
+
+//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        data?.count ?? 0
+//    }
+
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueCell(indexPath) as StocksTableViewCell
+//        let stockItem = data?[indexPath.row]
+//
+//        guard let stockItem else { return cell }
+//        if !indexPath.row.isMultiple(of: 2) {
+//            cell.configureCell(with: stockItem, isGray: true)
+//        } else {
+//            cell.configureCell(with: stockItem)
+//        }
+//
+//
+//        cell.onAddToFavButtonTapped = { [weak self] in
+//            self?.onAddToFavButtonTapped?(stockItem)
+//        }
+//
+//        return cell
+//    }

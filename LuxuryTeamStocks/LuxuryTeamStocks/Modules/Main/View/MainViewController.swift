@@ -54,8 +54,6 @@ final class MainViewController: UIViewController {
     }
 
     func configureContentStackView() {
-//        categoryStackConfigure()
-
         view.addSubviews(contentTableView)
         contentTableView.setConstraints(isSafeArea: true, allInsets: 20)
     }
@@ -92,17 +90,9 @@ final class MainViewController: UIViewController {
 
     func isHideContent(_ isHide: Bool) {
         contentTableView.alpha = isHide ? 0 : 1
-
-//        switch isHide {
-//        case true:
-//            contentStackView.alpha = 0
-//        case false:
-//            contentStackView.alpha = 1
-//        }
     }
 
-    func configure(with data: [StockModel], _ isFavoritesChosen: Bool) {
-//        print(#function)
+    func configure(with data: [StockModel], _ isFavoritesChosen: Bool, animate: Bool = true) {
 
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
@@ -111,12 +101,12 @@ final class MainViewController: UIViewController {
 
 //        isHideContent(false)
         activityIndicator.stopAnimating()
-        updateUI(with: data, isFavoritesChosen: isFavoritesChosen)
+        updateUI(with: data, isFavoritesChosen: isFavoritesChosen, animate: animate)
     }
 
-    func updateUI(with data: [StockModel], isFavoritesChosen: Bool) {
-//        print(#function)
-        contentTableView.updateUI(with: data, isFavoriteChosen: isFavoritesChosen)
+    func updateUI(with data: [StockModel], isFavoritesChosen: Bool, animate: Bool) {
+        contentTableView.updateUI(with: data, isFavoriteChosen: isFavoritesChosen, animate: animate)
+
     }
 
 }
@@ -133,8 +123,3 @@ extension MainViewController {
         present(alert, animated: true)
     }
 }
-
-//    func categoryStackConfigure() {
-//        stockCategory.text = "Stocks"
-//        favoriteCategory.text = "Favorites"
-//    }
