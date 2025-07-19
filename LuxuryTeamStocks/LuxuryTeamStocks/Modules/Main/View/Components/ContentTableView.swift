@@ -81,11 +81,36 @@ extension StocksTableView: UITableViewDataSource, UITableViewDelegate {
         }
 
 
-//        cell.onTaskStateChanged = { [weak self] in
-//            self?.onChangeTDLState?(item)
-//        }
+        //        cell.onTaskStateChanged = { [weak self] in
+        //            self?.onChangeTDLState?(item)
+        //        }
 
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        configureTableViewHeader()
+    }
+
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        40
+    }
+}
+
+// MARK: - Supporting methods
+private extension StocksTableView {
+    func configureTableViewHeader() -> UIView {
+        let stockCategory = AppLabel(type: .category)
+        let favoriteCategory = AppLabel(type: .category)
+
+        stockCategory.text = "Stocks"
+        favoriteCategory.text = "Favorites"
+
+        let categoriesStackView = AppStackView([stockCategory, favoriteCategory, UIView()], axis: .horizontal, spacing: 20)
+
+        categoriesStackView.backgroundColor = .systemBackground
+
+        return categoriesStackView
     }
 
 //    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {

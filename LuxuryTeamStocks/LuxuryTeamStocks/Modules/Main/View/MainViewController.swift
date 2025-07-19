@@ -10,14 +10,14 @@ import UIKit
 final class MainViewController: UIViewController {
 
     // MARK: - UI Properties
-    private lazy var stockCategory = AppLabel(type: .category)
-    private lazy var favoriteCategory = AppLabel(type: .category)
-
-    private lazy var categoriesStackView = AppStackView([stockCategory, favoriteCategory, UIView()], axis: .horizontal, spacing: 20)
+//    private lazy var stockCategory = AppLabel(type: .category)
+//    private lazy var favoriteCategory = AppLabel(type: .category)
+//
+//    private lazy var categoriesStackView = AppStackView([stockCategory, favoriteCategory, UIView()], axis: .horizontal, spacing: 20)
 
     private lazy var contentTableView = StocksTableView()
 
-    private lazy var contentStackView = AppStackView([categoriesStackView, contentTableView], axis: .vertical, spacing: 20)
+//    private lazy var contentStackView = AppStackView([categoriesStackView, contentTableView], axis: .vertical, spacing: 20)
 
     private lazy var activityIndicator = AppActivityIndicator()
 
@@ -51,16 +51,16 @@ final class MainViewController: UIViewController {
     }
 
     func configureContentStackView() {
-        categoryStackConfigure()
+//        categoryStackConfigure()
 
-        view.addSubviews(contentStackView)
-        contentStackView.setConstraints(isSafeArea: true, allInsets: 20)
+        view.addSubviews(contentTableView)
+        contentTableView.setConstraints(isSafeArea: true, allInsets: 20)
     }
 
-    func categoryStackConfigure() {
-        stockCategory.text = "Stocks"
-        favoriteCategory.text = "Favorites"
-    }
+//    func categoryStackConfigure() {
+//        stockCategory.text = "Stocks"
+//        favoriteCategory.text = "Favorites"
+//    }
 
     func configureActivityIndicator() {
         view.addSubviews(activityIndicator)
@@ -83,7 +83,7 @@ final class MainViewController: UIViewController {
     }
 
     func isHideContent(_ isHide: Bool) {
-        contentStackView.alpha = isHide ? 0 : 1
+        contentTableView.alpha = isHide ? 0 : 1
 
 //        switch isHide {
 //        case true:
