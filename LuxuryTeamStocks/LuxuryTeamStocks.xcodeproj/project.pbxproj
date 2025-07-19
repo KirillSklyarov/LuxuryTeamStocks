@@ -6,26 +6,18 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		73D09F2A2E2BB32200FF7C7C /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 73D09F292E2BB32200FF7C7C /* SDWebImage */; };
+		73D09F2C2E2BB32200FF7C7C /* SDWebImageMapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 73D09F2B2E2BB32200FF7C7C /* SDWebImageMapKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		73751F122E2B97350057595D /* LuxuryTeamStocks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LuxuryTeamStocks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		73751F242E2B97360057595D /* Exceptions for "LuxuryTeamStocks" folder in "LuxuryTeamStocks" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 73751F112E2B97350057595D /* LuxuryTeamStocks */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		73751F142E2B97350057595D /* LuxuryTeamStocks */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				73751F242E2B97360057595D /* Exceptions for "LuxuryTeamStocks" folder in "LuxuryTeamStocks" target */,
-			);
 			path = LuxuryTeamStocks;
 			sourceTree = "<group>";
 		};
@@ -36,6 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73D09F2C2E2BB32200FF7C7C /* SDWebImageMapKit in Frameworks */,
+				73D09F2A2E2BB32200FF7C7C /* SDWebImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +72,8 @@
 			);
 			name = LuxuryTeamStocks;
 			packageProductDependencies = (
+				73D09F292E2BB32200FF7C7C /* SDWebImage */,
+				73D09F2B2E2BB32200FF7C7C /* SDWebImageMapKit */,
 			);
 			productName = LuxuryTeamStocks;
 			productReference = 73751F122E2B97350057595D /* LuxuryTeamStocks.app */;
@@ -107,6 +103,9 @@
 			);
 			mainGroup = 73751F092E2B97350057595D;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				73D09F282E2BB32200FF7C7C /* XCRemoteSwiftPackageReference "SDWebImage" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 73751F132E2B97350057595D /* Products */;
 			projectDirPath = "";
@@ -147,10 +146,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7W278NP9KT;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = LuxuryTeamStocks/Info.plist;
+				INFOPLIST_FILE = LuxuryTeamStocks/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -175,10 +173,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7W278NP9KT;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = LuxuryTeamStocks/Info.plist;
+				INFOPLIST_FILE = LuxuryTeamStocks/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -337,6 +334,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		73D09F282E2BB32200FF7C7C /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImage.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.21.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		73D09F292E2BB32200FF7C7C /* SDWebImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 73D09F282E2BB32200FF7C7C /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImage;
+		};
+		73D09F2B2E2BB32200FF7C7C /* SDWebImageMapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 73D09F282E2BB32200FF7C7C /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImageMapKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 73751F0A2E2B97350057595D /* Project object */;
 }
