@@ -43,6 +43,7 @@ final class MainViewController: UIViewController {
 
         configureContentStack()
         configureActivityIndicator()
+        setupDismissKeyboardGesture()
         setupAction()
     }
 
@@ -66,6 +67,11 @@ final class MainViewController: UIViewController {
                 self.searchBar.isNeedToHideSearchBar(bool)
                 self.contentStack.layoutIfNeeded()
             }
+        }
+
+        searchBar.onTextChanged = { [weak self] text in
+            guard let self else { return }
+            viewModel.filterStocks(by: text)
         }
     }
 
@@ -125,5 +131,18 @@ extension MainViewController {
     private func showAlert() {
         let alert = AppAlert.create()
         present(alert, animated: true)
+    }
+}
+
+
+private extension MainViewController {
+    func setupDismissKeyboardGesture() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
 }

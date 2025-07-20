@@ -11,6 +11,7 @@ protocol MainViewModelling: AnyObject {
     func viewLoaded()
     func tabSelected(_ index: Int)
     func addOrRemoveFromFavorites(_ stock: StockModel)
+    func filterStocks(by text: String) 
 }
 
 final class MainViewModel: MainViewModelling {
@@ -20,6 +21,8 @@ final class MainViewModel: MainViewModelling {
     private var displayData: [StockModel] = []
 
     private var isFavoritesChosen = false
+    private var isFiltering = false
+    private var filterText: String = ""
 
     private var userDefaults = UDManager.shared
 
@@ -33,6 +36,25 @@ final class MainViewModel: MainViewModelling {
 //        print(#function)
         view?.setupInitialState()
         loadData()
+    }
+
+    func filterStocks(by text: String) {
+        let base = isFavoritesChosen ? favorites : data
+        print(#function)
+
+        if text.isEmpty {
+            isFiltering = false
+            filterText = ""
+            displayData = base
+        } else {
+            isFiltering = true
+            filterText = text
+            displayData = base.filter {
+                $0.symbol.lowercased().contains(text.lowercased()) ||
+                $0.name.lowercased().contains(text.lowercased())
+            }
+        }
+        view?.configure(with: displayData, isFavoritesChosen, animate: true)
     }
 
     private func mappingMockData() {
@@ -56,14 +78,33 @@ final class MainViewModel: MainViewModelling {
     }
 
     func tabSelected(_ index: Int) {
+//        print(correctData)
+
         if index == 0 {
-            displayData = data
             isFavoritesChosen = false
+            let correctData = getCorrectData()
+            displayData = correctData
         } else if index == 1 {
-            displayData = data.filter { $0.isFavorite }
             isFavoritesChosen = true
+            let correctData = getCorrectData()
+            displayData = correctData.filter { $0.isFavorite }
         }
         view?.configure(with: displayData, isFavoritesChosen)
+    }
+
+    private func getCorrectData() -> [StockModel] {
+        let base = isFavoritesChosen ? favorites : data
+        print(base, filterText)
+        var newData: [StockModel] = []
+        if filterText.isEmpty {
+            newData = base
+        } else {
+            newData = base.filter {
+                $0.symbol.lowercased().contains(filterText.lowercased()) ||
+                $0.name.lowercased().contains(filterText.lowercased())
+            }
+        }
+        return newData
     }
 
     func checkDataAndUpdateView() {

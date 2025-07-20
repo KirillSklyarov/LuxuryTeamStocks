@@ -10,11 +10,13 @@ import UIKit
 enum AppButtonStyle {
     case stocks
     case favourite
+    case textFieldClear
 }
 
 final class AppButton: UIButton {
 
     var onButtonTapped: ((Int) -> Void)?
+    var onClearTextButtonTapped: (() -> Void)?
 
     init(style: AppButtonStyle, isSelected: Bool) {
         super.init(frame: .zero)
@@ -34,7 +36,6 @@ final class AppButton: UIButton {
             titleLabel?.font = AppConstants.Fonts.regular
         }
     }
-
 }
 
 private extension AppButton {
@@ -43,18 +44,31 @@ private extension AppButton {
         case .stocks:
             tag = 0
             setTitle("Stocks", for: .normal)
+            setTitleColor(.black, for: .normal)
+            titleLabel?.font = AppConstants.Fonts.headline
+            applySelectedStyle(isSelected)
+            addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
         case .favourite:
             tag = 1
             setTitle("Favorites", for: .normal)
+            setTitleColor(.black, for: .normal)
+            titleLabel?.font = AppConstants.Fonts.headline
+            applySelectedStyle(isSelected)
+            addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        case .textFieldClear:
+            setImage(UIImage(named: "clearText"), for: .normal)
+            addTarget(self, action: #selector(clearTextButtonTapped), for: .touchUpInside)
+            translatesAutoresizingMaskIntoConstraints = false
+            heightAnchor.constraint(equalToConstant: 24).isActive = true
+            widthAnchor.constraint(equalToConstant: 24).isActive = true
         }
-        setTitleColor(.black, for: .normal)
-        titleLabel?.font = AppConstants.Fonts.headline
-        applySelectedStyle(isSelected)
-
-        addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
     }
 
     @objc func buttonTapped(_ sender: UIButton) {
         onButtonTapped?(sender.tag)
+    }
+
+    @objc func clearTextButtonTapped() {
+        onClearTextButtonTapped?()
     }
 }

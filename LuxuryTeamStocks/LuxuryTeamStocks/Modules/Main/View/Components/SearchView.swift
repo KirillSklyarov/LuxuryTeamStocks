@@ -17,6 +17,7 @@ final class SearchView: UIView {
         return view
     }()
     private lazy var glassImageView = AppImageView(type: .glass)
+
     private let textField: UITextField = {
         let textField = UITextField()
         textField.attributedPlaceholder = NSAttributedString(
@@ -25,18 +26,37 @@ final class SearchView: UIView {
                 .foregroundColor: AppConstants.Colors.black,
                 .font: AppConstants.Fonts.searchBar ?? .boldSystemFont(ofSize: 30)
             ])
+        textField.clearButtonMode = .never
+        textField.rightViewMode = .whileEditing
         textField.font = AppConstants.Fonts.searchBar
         return textField
     }()
+
+    private lazy var clearTextButton = AppButton(style: .textFieldClear, isSelected: false)
+
+    private lazy var clearButtonContainer: UIView = {
+        let view = UIView()
+        view.addSubviews(clearTextButton)
+        clearTextButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            clearTextButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            clearTextButton.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+        return view
+    }()
+
     private lazy var searchStackView = AppStackView([glassImageView, textField], axis: .horizontal, spacing: 10)
 
 
     private var searchHeightConstraint: NSLayoutConstraint!
 
+    var onTextChanged: ((String) -> Void)?
+
     // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setup()
+        setupUI()
+        setupActions()
     }
 
     required init?(coder: NSCoder) {
@@ -47,6 +67,7 @@ final class SearchView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         roundContainer.layer.cornerRadius = roundContainer.frame.height / 2
+        clearButtonContainer.widthAnchor.constraint(equalToConstant: 30).isActive = true
     }
 
     func isNeedToHideSearchBar(_ bool: Bool) {
@@ -54,9 +75,25 @@ final class SearchView: UIView {
     }
 }
 
+extension SearchView: UITextFieldDelegate {
+    @objc func textFieldDidChange(_ textField: UITextField) {
+        onTextChanged?(textField.text ?? "")
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+}
+
 // MARK: - Private methods
 private extension SearchView {
-    func setup() {
+    func setupUI() {
+        textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        textField.rightView = clearButtonContainer
+        textField.rightViewMode = .whileEditing
+        textField.delegate = self
+
         configureGlassImageView()
 
         addSubviews(roundContainer)
@@ -70,7 +107,17 @@ private extension SearchView {
         roundContainer.addSubviews(searchStackView)
         NSLayoutConstraint.activate([
             searchStackView.centerYAnchor.constraint(equalTo: roundContainer.centerYAnchor),
-            searchStackView.leadingAnchor.constraint(equalTo: roundContainer.leadingAnchor, constant: 20)
+            searchStackView.leadingAnchor.constraint(equalTo: roundContainer.leadingAnchor, constant: 16),
+            searchStackView.trailingAnchor.constraint(equalTo: roundContainer.trailingAnchor, constant: -16)
+
         ])
+    }
+
+    func setupActions() {
+        clearTextButton.onClearTextButtonTapped = { [weak self] in
+            guard let self else { return }
+            textField.text = ""
+            onTextChanged?(textField.text ?? "")
+        }
     }
 }
