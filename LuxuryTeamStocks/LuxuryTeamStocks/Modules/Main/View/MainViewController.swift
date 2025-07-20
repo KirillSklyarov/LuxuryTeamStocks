@@ -10,16 +10,12 @@ import UIKit
 final class MainViewController: UIViewController {
 
     // MARK: - UI Properties
-//    private lazy var stockCategory = AppLabel(type: .category)
-//    private lazy var favoriteCategory = AppLabel(type: .category)
-//
-//    private lazy var categoriesStackView = AppStackView([stockCategory, favoriteCategory, UIView()], axis: .horizontal, spacing: 20)
+    private lazy var searchBar = SearchView()
 
     private lazy var contentTableView = StocksTableView()
-
-//    private lazy var contentStackView = AppStackView([categoriesStackView, contentTableView], axis: .vertical, spacing: 20)
-
     private lazy var activityIndicator = AppActivityIndicator()
+
+    private lazy var contentStack = AppStackView([searchBar, contentTableView], axis: .vertical, spacing: 20)
 
     var onAddToFavButtonTapped: ((StockModel) -> Void)?
 
@@ -48,9 +44,15 @@ final class MainViewController: UIViewController {
 
     func configureUI() {
         view.backgroundColor = .systemBackground
-        configureContentStackView()
+        configureSearchBarView()
+//        configureContentStackView()
         configureActivityIndicator()
         setupAction()
+    }
+
+    func configureSearchBarView() {
+        view.addSubviews(contentStack)
+        contentStack.setConstraints(isSafeArea: true, allInsets: 20)
     }
 
     func configureContentStackView() {

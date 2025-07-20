@@ -26,7 +26,6 @@ final class AppButton: UIButton {
     }
 
     func applySelectedStyle(_ isSelected: Bool) {
-//        print(#function, isSelected)
         if isSelected {
             setTitleColor(.black, for: .normal)
             titleLabel?.font = AppConstants.Fonts.headline
