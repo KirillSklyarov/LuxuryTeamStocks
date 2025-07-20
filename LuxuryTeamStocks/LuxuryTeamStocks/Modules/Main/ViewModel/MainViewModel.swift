@@ -105,6 +105,7 @@ private extension MainViewModel {
     }
 
     func getFavoritesFromUD() {
+        print(#function)
         self.favorites = userDefaults.loadFavouritesFromUD()
     }
 
@@ -141,7 +142,7 @@ private extension MainViewModel {
         if isFiltering {
             showFirstFourElements()
         } else {
-            updateView()
+            updateView(animate: animate)
         }
     }
 
@@ -170,6 +171,14 @@ private extension MainViewModel {
     func setStockAsFavorite(_ stock: StockModel) {
         if let index = data.firstIndex(of: stock) {
             data[index].isFavorite.toggle()
+            saveToUD(stock)
+        }
+    }
+
+    func saveToUD(_ stock: StockModel) {
+        switch !stock.isFavorite {
+        case true: userDefaults.addToFavorites(stock)
+        case false: userDefaults.removeFromFavorites(stock)
         }
     }
 }

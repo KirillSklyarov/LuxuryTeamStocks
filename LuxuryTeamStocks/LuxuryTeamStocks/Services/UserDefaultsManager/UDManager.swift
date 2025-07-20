@@ -19,44 +19,62 @@ final class UDManager: UDManagerProtocol {
     private init() {}
 
     private let defaults = UserDefaults.standard
+    private let encoder = JSONEncoder()
+    private let decoder = JSONDecoder()
+    private let queue = DispatchQueue(label: "ru.luxuryTeam.UDManagerQueue", qos: .background)
 
     // MARK: - CRUD
     func addToFavorites(_ stock: StockModel) {
-        var favourites = loadFavouritesFromUD()
+        queue.async { [weak self] in
+            guard let self else { return }
+            var favourites = loadFavouritesFromUD()
+            if !favourites.contains(where: { $0.symbol == stock.symbol }) {
+                favourites.append(stock)
+                print("✅ Added to favourites: \(stock.symbol)")
+            }
 
-        if !favourites.contains(where: { $0.symbol == stock.symbol }) {
-            favourites.append(stock)
-            print("✅ Added to favourites")
+            saveFavouritesToUD(favourites)
         }
-
-        saveFavouritesToUD(favourites)
     }
 
     func removeFromFavorites(_ stock: StockModel) {
-        var favourites = loadFavouritesFromUD()
+        queue.async { [weak self] in
+            guard let self else { return }
+            var favourites = loadFavouritesFromUD()
+            favourites.removeAll(where: { $0.symbol == stock.symbol })
+            print("✅ Removed from favourites \(stock.symbol)")
 
-        favourites.removeAll(where: { $0.symbol == stock.symbol })
-        print("✅ Removed from favourites")
-
-        saveFavouritesToUD(favourites)
+            saveFavouritesToUD(favourites)
+        }
     }
 
     func loadFavouritesFromUD() -> [StockModel] {
-        var favourites: [StockModel] = []
         if let savedData = defaults.data(forKey: AppConstants.UserDefaultsKeys.favourites),
-           let decoded = try? JSONDecoder().decode([StockModel].self, from: savedData) {
-            favourites = decoded
+           let decoded = try? decoder.decode([StockModel].self, from: savedData) {
+            print("✅ Loaded favourites from UD: \(decoded.count) items")
+            return decoded
+        } else {
+            print("🔴 No data found in UD")
+            return []
         }
-        return favourites
     }
 }
 
 // MARK: - Supporting methods
 private extension UDManager {
     func saveFavouritesToUD(_ data: [StockModel]) {
-        if let newData = try? JSONEncoder().encode(data) {
-            defaults.set(newData, forKey: AppConstants.UserDefaultsKeys.favourites)
-            print("✅ Saved to UD")
+        queue.async { [weak self] in
+            guard let self else { return }
+            if let newData = try? encoder.encode(data) {
+                defaults.set(newData, forKey: AppConstants.UserDefaultsKeys.favourites)
+                print("✅ Data saved to UD")
+            }
         }
     }
 }
+
+//    func saveAllChangesToUD() {
+//        let favorites = mockData.filter { $0.isFavorite }
+//        print(favorites)
+//        saveFavouritesToUD(favorites)
+//    }

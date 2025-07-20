@@ -27,7 +27,7 @@ struct StockModel: Codable, Equatable, Hashable {
     }
 }
 
-let mockData: [StockModel] = [
+var mockData: [StockModel] = [
     StockModel(symbol: "AAPL", name: "Apple Inc.", price: 131.93, change: 0.12, changePercent: 0.13, logo: "https://mustdev.ru/images/AAPL"),
     StockModel(symbol: "GOOGL", name: "Alphabet Class A", price: 1825.00, change: 0.12, changePercent: 0.13, logo: "https://mustdev.ru/images/GOOGL"),
     StockModel(symbol: "AMZN", name: "Amazon.com", price: 3204.00, change: -0.12, changePercent: -0.13, logo: "https://mustdev.ru/images/AMZN"),
