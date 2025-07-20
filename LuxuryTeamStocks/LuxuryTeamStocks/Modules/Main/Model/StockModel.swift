@@ -35,5 +35,10 @@ let mockData: [StockModel] = [
     StockModel(symbol: "MSFT", name: "Microsoft Corporation", price: 3204.00, change: 0.12, changePercent: 0.13, logo: "https://mustdev.ru/images/MSFT"),
     StockModel(symbol: "TSLA", name: "Tesla Motors", price: 3204.00, change: 0.12, changePercent: 0.13, logo: "https://mustdev.ru/images/TSLA"),
     StockModel(symbol: "MA", name: "Mastercard", price: 3204.00, change: 0.12, changePercent: 0.13, logo: "https://mustdev.ru/images/MA"),
-    StockModel(symbol: "YNDX", name: "Yandex, LLC", price: 131.6, change: 0.9, changePercent: 0.3, logo: "https://mustdev.ru/images/YNDX")
+    StockModel(symbol: "YNDX", name: "Yandex, LLC", price: 131.6, change: 0.9, changePercent: 0.3, logo: "https://mustdev.ru/images/YNDX"),
+    StockModel(symbol: "YNDX1", name: "Yandex, LLC", price: 131.6, change: 0.9, changePercent: 0.3, logo: "https://mustdev.ru/images/YNDX"),
+    StockModel(symbol: "YNDX2", name: "Yandex, LLC", price: 131.6, change: 0.9, changePercent: 0.3, logo: "https://mustdev.ru/images/YNDX"),
+    StockModel(symbol: "YNDX3", name: "Yandex, LLC", price: 131.6, change: 0.9, changePercent: 0.3, logo: "https://mustdev.ru/images/YNDX"),
+    StockModel(symbol: "YNDX4", name: "Yandex, LLC", price: 131.6, change: 0.9, changePercent: 0.3, logo: "https://mustdev.ru/images/YNDX"),
+    StockModel(symbol: "YNDX5", name: "Yandex, LLC", price: 131.6, change: 0.9, changePercent: 0.3, logo: "https://mustdev.ru/images/YNDX")
 ]

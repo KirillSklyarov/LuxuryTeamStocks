@@ -11,7 +11,6 @@ enum Section {
     case main
 }
 
-
 final class StocksTableView: UITableView {
 
     private var diffableDataSource: UITableViewDiffableDataSource<Section, StockModel>!
@@ -22,12 +21,12 @@ final class StocksTableView: UITableView {
     private var isFavoriteChosen: Bool = true
 
     var onGetFilteredData: ((String) -> Void)?
-    var tabSelected: ((Int) -> Void)?
     var onAddToFavButtonTapped: ((StockModel) -> Void)?
+    var onHideSearchBar: ((Bool) -> Void)?
 
     // MARK: - Init
     override init(frame: CGRect, style: UITableView.Style) {
-        super.init(frame: frame, style: style)
+        super.init(frame: frame, style: .plain)
         setupUI()
     }
 
@@ -45,7 +44,7 @@ final class StocksTableView: UITableView {
 
     func updateUI(with data: [StockModel], isFavoriteChosen: Bool, animate: Bool = true) {
         self.isFavoriteChosen = isFavoriteChosen
-        print("isFavoriteChosen \(self.isFavoriteChosen)")
+//        print("isFavoriteChosen \(self.isFavoriteChosen)")
 
         var snapshot = NSDiffableDataSourceSnapshot<Section, StockModel>()
         snapshot.appendSections([.main])
@@ -88,44 +87,17 @@ private extension StocksTableView {
     }
 }
 
-// MARK: - UITableViewDataSource, UITableViewDelegate
+// MARK: - UITableViewDelegate
 extension StocksTableView: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        configureTableViewHeader(isFavoriteChosen)
-    }
-
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        40
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        onHideSearchBar?(offsetY > 10)
     }
 }
 
 // MARK: - Supporting methods
 private extension StocksTableView {
-    func configureTableViewHeader(_ isFavoriteChosen: Bool) -> UIView {
-        let stockButton = AppButton(style: .stocks, isSelected: !isFavoriteChosen)
-        let favoriteButton = AppButton(style: .favourite, isSelected: isFavoriteChosen)
-
-        let categoriesStackView = AppStackView([stockButton, favoriteButton, UIView()], axis: .horizontal, spacing: 20)
-
-        categoriesStackView.backgroundColor = .systemBackground
-
-
-        stockButton.onButtonTapped = { [weak self] tag in
-            stockButton.applySelectedStyle(true)
-            favoriteButton.applySelectedStyle(false)
-            self?.tabSelected?(tag)
-        }
-
-        favoriteButton.onButtonTapped = { [weak self] tag in
-            stockButton.applySelectedStyle(false)
-            favoriteButton.applySelectedStyle(true)
-//            print(tag)
-            self?.tabSelected?(tag)
-        }
-
-        return categoriesStackView
-    }
-
+    
     func designEvenAndOddRows(for indexPath: IndexPath) -> Bool {
         let isGray: Bool
 
@@ -144,27 +116,3 @@ private extension StocksTableView {
 //
 //    }
 //}
-
-
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        data?.count ?? 0
-//    }
-
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = tableView.dequeueCell(indexPath) as StocksTableViewCell
-//        let stockItem = data?[indexPath.row]
-//
-//        guard let stockItem else { return cell }
-//        if !indexPath.row.isMultiple(of: 2) {
-//            cell.configureCell(with: stockItem, isGray: true)
-//        } else {
-//            cell.configureCell(with: stockItem)
-//        }
-//
-//
-//        cell.onAddToFavButtonTapped = { [weak self] in
-//            self?.onAddToFavButtonTapped?(stockItem)
-//        }
-//
-//        return cell
-//    }

@@ -11,11 +11,11 @@ final class MainViewController: UIViewController {
 
     // MARK: - UI Properties
     private lazy var searchBar = SearchView()
-
+    private lazy var categoryHeader = CategoryHeaderView()
     private lazy var contentTableView = StocksTableView()
     private lazy var activityIndicator = AppActivityIndicator()
 
-    private lazy var contentStack = AppStackView([searchBar, contentTableView], axis: .vertical, spacing: 20)
+    private lazy var contentStack = AppStackView([searchBar, categoryHeader, contentTableView], axis: .vertical, spacing: 5)
 
     var onAddToFavButtonTapped: ((StockModel) -> Void)?
 
@@ -35,38 +35,37 @@ final class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.viewLoaded()
-//        configureUI()
     }
 
-    func setupInitialState() {
-        configureUI()
-    }
 
     func configureUI() {
         view.backgroundColor = .systemBackground
-        configureSearchBarView()
-//        configureContentStackView()
+
+        configureContentStack()
         configureActivityIndicator()
         setupAction()
     }
 
-    func configureSearchBarView() {
+    func configureContentStack() {
         view.addSubviews(contentStack)
-        contentStack.setConstraints(isSafeArea: true, allInsets: 20)
-    }
-
-    func configureContentStackView() {
-        view.addSubviews(contentTableView)
-        contentTableView.setConstraints(isSafeArea: true, allInsets: 20)
+        contentStack.setConstraints(isSafeArea: true, allInsets: 16)
     }
 
     func setupAction() {
-        contentTableView.tabSelected = { [weak self] tag in
+        categoryHeader.tabSelected = { [weak self] tag in
             self?.viewModel.tabSelected(tag)
         }
 
         contentTableView.onAddToFavButtonTapped = { [weak self] stock in
             self?.viewModel.addOrRemoveFromFavorites(stock)
+        }
+
+        contentTableView.onHideSearchBar = { [weak self] bool in
+            guard let self else { return }
+            UIView.animate(withDuration: 0.3) {
+                self.searchBar.isNeedToHideSearchBar(bool)
+                self.contentStack.layoutIfNeeded()
+            }
         }
     }
 
@@ -80,6 +79,10 @@ final class MainViewController: UIViewController {
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
+    }
+
+    func setupInitialState() {
+        configureUI()
     }
 
     func loading() {
@@ -110,7 +113,6 @@ final class MainViewController: UIViewController {
         contentTableView.updateUI(with: data, isFavoriteChosen: isFavoritesChosen, animate: animate)
 
     }
-
 }
 
 // MARK: - Error handler
