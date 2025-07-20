@@ -9,9 +9,14 @@ import Foundation
 
 protocol MainViewModelling: AnyObject {
     func viewLoaded()
-    func tabSelected(_ index: Int)
-    func addOrRemoveFromFavorites(_ stock: StockModel)
-    func filterStocks(by text: String) 
+    func eventHandler(_ event: MainViewModelEvent)
+}
+
+enum MainViewModelEvent {
+    case showMoreButtonTapped
+    case categoryChanged(Int)
+    case addToFavoriteButtonTapped(StockModel)
+    case filteringModeStarted(String)
 }
 
 final class MainViewModel: MainViewModelling {
@@ -38,14 +43,37 @@ final class MainViewModel: MainViewModelling {
 // MARK: - MainViewModelling
 extension MainViewModel {
     func viewLoaded() {
-        //        print(#function)
         view?.setupInitialState()
         loadData()
     }
 
-    func tabSelected(_ index: Int) {
-        //        print(correctData)
+    func eventHandler(_ event: MainViewModelEvent) {
+        switch event {
+        case .showMoreButtonTapped: showAllFilteredElements()
+        case .categoryChanged(let tag): tabSelected(tag)
+        case .addToFavoriteButtonTapped(let stock): addOrRemoveFromFavorites(stock)
+        case .filteringModeStarted(let filterText): filterStocks(by: filterText)
+        }
+    }
+}
 
+// MARK: - Supporting methods
+private extension MainViewModel {
+    func mappingMockData() {
+        let favSymbols = Set(favorites.map { $0.symbol })
+        self.data = mockData.map { stock in
+            var copy = stock
+            copy.isFavorite = favSymbols.contains(stock.symbol)
+            return copy
+        }
+    }
+
+    func showAllFilteredElements(animate: Bool = true) {
+        displayData = getCorrectData()
+        view?.configure(with: displayData, isFavoritesChosen, animate: animate)
+    }
+
+    func tabSelected(_ index: Int) {
         if index == 0 {
             isFavoritesChosen = false
         } else if index == 1 {
@@ -69,18 +97,6 @@ extension MainViewModel {
         }
         updateView()
     }
-}
-
-// MARK: - Supporting methods
-private extension MainViewModel {
-    func mappingMockData() {
-        let favSymbols = Set(favorites.map { $0.symbol })
-        self.data = mockData.map { stock in
-            var copy = stock
-            copy.isFavorite = favSymbols.contains(stock.symbol)
-            return copy
-        }
-    }
 
     func loadData() {
         view?.loading()
@@ -90,13 +106,12 @@ private extension MainViewModel {
 
     func getFavoritesFromUD() {
         self.favorites = userDefaults.loadFavouritesFromUD()
-        //        print(favourites)
     }
 
     func getCorrectData() -> [StockModel] {
         updateFavorites()
         let base = isFavoritesChosen ? favorites : data
-//        print(base, filterText)
+        //        print(base, filterText)
 
         if filterText.isEmpty {
             return base
@@ -123,9 +138,24 @@ private extension MainViewModel {
     func updateView(animate: Bool = true) {
         updateFavorites()
         displayData = getCorrectData()
-        view?.configure(with: displayData, isFavoritesChosen, animate: animate)
+        if isFiltering {
+            showFirstFourElements()
+        } else {
+            view?.configure(with: displayData, isFavoritesChosen, animate: animate)
+        }
     }
 
+    func showFirstFourElements(animate: Bool = true) {
+        if displayData.count < 4 {
+            view?.configure(with: displayData, isFavoritesChosen, animate: animate)
+        } else {
+            print("Here")
+            let first4 = Array(displayData.prefix(4))
+            print(first4.count)
+            view?.configure(with: first4, isFavoritesChosen, animate: animate)
+        }
+    }
+    
     func getError() {
         DispatchQueue.main.async { [weak self] in
             self?.view?.showError()

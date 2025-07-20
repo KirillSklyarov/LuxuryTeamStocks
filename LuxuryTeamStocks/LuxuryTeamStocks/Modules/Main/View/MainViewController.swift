@@ -13,7 +13,7 @@ final class MainViewController: UIViewController {
     private lazy var searchBar = SearchView()
     private lazy var categoryHeader = CategoryHeaderView()
 
-    private lazy var stockTitle = AppLabel(type: .title, title: "Stocks")
+    private lazy var searchHeaderView = SearchHeaderView()
 
     private lazy var contentTableView = StocksTableView()
     private lazy var searchPlaceholderCollectionView = SearchCollectionView()
@@ -73,11 +73,11 @@ final class MainViewController: UIViewController {
 
     func setupAction() {
         categoryHeader.tabSelected = { [weak self] tag in
-            self?.viewModel.tabSelected(tag)
+            self?.viewModel.eventHandler(.categoryChanged(tag))
         }
 
         contentTableView.onAddToFavButtonTapped = { [weak self] stock in
-            self?.viewModel.addOrRemoveFromFavorites(stock)
+            self?.viewModel.eventHandler(.addToFavoriteButtonTapped(stock))
         }
 
         contentTableView.onHideSearchBar = { [weak self] bool in
@@ -90,12 +90,10 @@ final class MainViewController: UIViewController {
 
         searchBar.onTextChanged = { [weak self] text in
             guard let self else { return }
-            print(#function)
-
             swapHeaders(with: text)
             hideSearchPlaceholder()
 
-            viewModel.filterStocks(by: text)
+            viewModel.eventHandler(.filteringModeStarted(text))
         }
 
         searchBar.onBeginEditing = { [weak self] in
@@ -111,7 +109,11 @@ final class MainViewController: UIViewController {
             swapHeaders(with: stockName)
             hideSearchPlaceholder()
 
-            viewModel.filterStocks(by: stockName)
+            viewModel.eventHandler(.filteringModeStarted(stockName))
+        }
+
+        searchHeaderView.onShowMoreButtonTapped = { [weak self] in
+            self?.viewModel.eventHandler(.showMoreButtonTapped)
         }
     }
 
@@ -124,18 +126,18 @@ final class MainViewController: UIViewController {
     }
 
     private func swapHeadersToSearching() {
-        guard let index = headerAndTableViewStack.arrangedSubviews.firstIndex(of: self.categoryHeader) else { print("categoryHeader not found"); return }
+        guard let index = headerAndTableViewStack.arrangedSubviews.firstIndex(of: self.categoryHeader) else { return }
         headerAndTableViewStack.removeArrangedSubview(categoryHeader)
         categoryHeader.removeFromSuperview()
-        headerAndTableViewStack.insertArrangedSubview(self.stockTitle, at: index)
+        headerAndTableViewStack.insertArrangedSubview(self.searchHeaderView, at: index)
 
         contentStack.spacing = 32
     }
 
     private func swapHeadersToBaseMode() {
-        guard let index = headerAndTableViewStack.arrangedSubviews.firstIndex(of: self.stockTitle) else { print("stockTitle not found"); return }
-        headerAndTableViewStack.removeArrangedSubview(stockTitle)
-        stockTitle.removeFromSuperview()
+        guard let index = headerAndTableViewStack.arrangedSubviews.firstIndex(of: self.searchHeaderView) else { print("stockTitle not found"); return }
+        headerAndTableViewStack.removeArrangedSubview(searchHeaderView)
+        searchHeaderView.removeFromSuperview()
         headerAndTableViewStack.insertArrangedSubview(self.categoryHeader, at: index)
         contentStack.spacing = 20
     }

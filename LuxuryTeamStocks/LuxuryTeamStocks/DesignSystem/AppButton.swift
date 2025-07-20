@@ -11,12 +11,14 @@ enum AppButtonStyle {
     case stocks
     case favourite
     case textFieldClear
+    case showMore
 }
 
 final class AppButton: UIButton {
 
     var onButtonTapped: ((Int) -> Void)?
     var onClearTextButtonTapped: (() -> Void)?
+    var onShowMoreButtonTapped: (() -> Void)?
 
     init(style: AppButtonStyle, isSelected: Bool) {
         super.init(frame: .zero)
@@ -61,14 +63,23 @@ private extension AppButton {
             translatesAutoresizingMaskIntoConstraints = false
             heightAnchor.constraint(equalToConstant: 24).isActive = true
             widthAnchor.constraint(equalToConstant: 24).isActive = true
+        case .showMore:
+            setTitle("Show more", for: .normal)
+            setTitleColor(.black, for: .normal)
+            titleLabel?.font = AppConstants.Fonts.searchPlaceholder
+            addTarget(self, action: #selector(showMoreButtonTapped), for: .touchUpInside)
         }
     }
 
-    @objc func buttonTapped(_ sender: UIButton) {
+    @objc private func buttonTapped(_ sender: UIButton) {
         onButtonTapped?(sender.tag)
     }
 
-    @objc func clearTextButtonTapped() {
+    @objc private func clearTextButtonTapped() {
         onClearTextButtonTapped?()
+    }
+
+    @objc private func showMoreButtonTapped() {
+        onShowMoreButtonTapped?()
     }
 }

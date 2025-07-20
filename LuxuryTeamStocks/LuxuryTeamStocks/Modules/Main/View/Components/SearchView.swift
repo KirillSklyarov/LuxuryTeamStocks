@@ -38,7 +38,6 @@ final class SearchView: UIView {
                 .font: AppConstants.Fonts.searchBar ?? .boldSystemFont(ofSize: 30)
             ])
         textField.clearButtonMode = .never
-        textField.rightViewMode = .whileEditing
         textField.font = AppConstants.Fonts.searchBar
         textField.tintColor = AppConstants.Colors.black
         return textField
@@ -95,6 +94,8 @@ final class SearchView: UIView {
 // MARK: - UITextFieldDelegate
 extension SearchView: UITextFieldDelegate {
     @objc func textFieldDidChange(_ textField: UITextField) {
+        guard let text = textField.text else { return }
+        showOrHideClearTextFieldButton(text)
         onTextChanged?(textField.text ?? "")
     }
 
@@ -104,9 +105,28 @@ extension SearchView: UITextFieldDelegate {
     }
 
     func textFieldDidBeginEditing(_ textField: UITextField) {
+        hideClearTextFieldButton()
+
         textField.placeholder = ""
         changeLeftImage(.leftArrow)
         onBeginEditing?()
+    }
+}
+
+// MARK: - Supporting methods
+private extension SearchView {
+    func showOrHideClearTextFieldButton(_ text: String) {
+        !text.isEmpty ? showClearTextFieldButton() : hideClearTextFieldButton()
+    }
+
+    func hideClearTextFieldButton() {
+        textField.rightView = nil
+        textField.rightViewMode = .never
+    }
+
+    func showClearTextFieldButton() {
+        textField.rightView = clearButtonContainer
+        textField.rightViewMode = .whileEditing
     }
 
     enum LeftImages: String {
@@ -114,13 +134,13 @@ extension SearchView: UITextFieldDelegate {
         case leftArrow
     }
 
-    private func changeLeftImage(_ imageType: LeftImages) {
+    func changeLeftImage(_ imageType: LeftImages) {
         glassImageView.image = UIImage(named: imageType.rawValue)
         let tap = UITapGestureRecognizer(target: self, action: #selector(backToTableView))
         glassImageContainer.addGestureRecognizer(tap)
     }
 
-    @objc private func backToTableView() {
+    @objc  func backToTableView() {
         exitSearchMode()
     }
 }
@@ -130,7 +150,7 @@ private extension SearchView {
     func setupUI() {
         textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         textField.rightView = clearButtonContainer
-        textField.rightViewMode = .whileEditing
+//        textField.rightViewMode = .whileEditing
         textField.delegate = self
 
         configureGlassImageView()
