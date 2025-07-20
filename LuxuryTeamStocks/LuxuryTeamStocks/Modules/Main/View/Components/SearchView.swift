@@ -51,6 +51,7 @@ final class SearchView: UIView {
     private var searchHeightConstraint: NSLayoutConstraint!
 
     var onTextChanged: ((String) -> Void)?
+    var onBeginEditing: (() -> Void)?
 
     // MARK: - Init
     override init(frame: CGRect) {
@@ -75,6 +76,7 @@ final class SearchView: UIView {
     }
 }
 
+// MARK: - UITextFieldDelegate
 extension SearchView: UITextFieldDelegate {
     @objc func textFieldDidChange(_ textField: UITextField) {
         onTextChanged?(textField.text ?? "")
@@ -83,6 +85,11 @@ extension SearchView: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.placeholder = ""
+        onBeginEditing?()
     }
 }
 
@@ -117,6 +124,7 @@ private extension SearchView {
         clearTextButton.onClearTextButtonTapped = { [weak self] in
             guard let self else { return }
             textField.text = ""
+            textField.placeholder = "Find company or ticker"
             onTextChanged?(textField.text ?? "")
         }
     }

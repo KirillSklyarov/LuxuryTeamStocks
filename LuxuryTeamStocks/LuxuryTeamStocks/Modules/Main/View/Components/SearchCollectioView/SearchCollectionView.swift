@@ -36,8 +36,8 @@ final class SearchCollectionView: UICollectionView {
     private static func setupUICollectionViewFlowLayout() -> UICollectionViewFlowLayout {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.minimumInteritemSpacing = 8    // расстояние между чипсами по горизонтали
-        layout.minimumLineSpacing = 8         // расстояние между строками
+        layout.minimumInteritemSpacing = 4
+        layout.minimumLineSpacing = 8
         layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 28, right: 0)
 

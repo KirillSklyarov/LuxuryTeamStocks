@@ -56,7 +56,16 @@ final class MainViewController: UIViewController {
 
     func setupSearchPlaceholder() {
         view.addSubviews(searchPlaceholderCollectionView)
-        searchPlaceholderCollectionView.setConstraints(isSafeArea: true, allInsets: 16)
+        searchPlaceholderCollectionView.alpha = 0
+
+//        searchPlaceholderCollectionView.isHidden = true
+
+        NSLayoutConstraint.activate([
+            searchPlaceholderCollectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 32),
+            searchPlaceholderCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            searchPlaceholderCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            searchPlaceholderCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ])
     }
 
     func setupAction() {
@@ -78,7 +87,29 @@ final class MainViewController: UIViewController {
 
         searchBar.onTextChanged = { [weak self] text in
             guard let self else { return }
+            hideSearchPlaceholder()
             viewModel.filterStocks(by: text)
+        }
+
+        searchBar.onBeginEditing = { [weak self] in
+            guard let self else { return }
+            showSearchPlaceholder()
+        }
+    }
+
+    private func showSearchPlaceholder() {
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            guard let self else { return }
+            searchPlaceholderCollectionView.alpha = 1
+            [categoryHeader, contentTableView].forEach { $0.alpha = 0 }
+        }
+    }
+
+    private func hideSearchPlaceholder() {
+        UIView.animate(withDuration: 0.3) { [weak self] in
+            guard let self else { return }
+            searchPlaceholderCollectionView.alpha = 0
+            [categoryHeader, contentTableView].forEach { $0.alpha = 1 }
         }
     }
 
