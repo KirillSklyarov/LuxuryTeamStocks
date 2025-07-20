@@ -15,13 +15,17 @@ protocol UDManagerProtocol {
 
 final class UDManager: UDManagerProtocol {
 
-    static let shared = UDManager()
-    private init() {}
+    private let encoder: JSONEncoder
+    private let decoder: JSONDecoder
 
     private let defaults = UserDefaults.standard
-    private let encoder = JSONEncoder()
-    private let decoder = JSONDecoder()
     private let queue = DispatchQueue(label: "ru.luxuryTeam.UDManagerQueue", qos: .background)
+
+    // MARK: - Init
+    init(encoder: JSONEncoder, decoder: JSONDecoder) {
+        self.encoder = encoder
+        self.decoder = decoder
+    }
 
     // MARK: - CRUD
     func addToFavorites(_ stock: StockModel) {

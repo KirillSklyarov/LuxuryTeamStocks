@@ -105,10 +105,3 @@ private extension StocksTableView {
         self.isFilteringMode = isFilteringMode
     }
 }
-
-// MARK: - Setup Actions
-//private extension StocksTableView {
-//    func setupAction() {
-//
-//    }
-//}

@@ -10,12 +10,13 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    let di = DependencyContainer()
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: scene)
 
-        let viewModel = MainViewModel()
+        let viewModel = MainViewModel(networkService: di.networkService, udManager: di.udManager)
         let vc = MainViewController(viewModel: viewModel)
         viewModel.view = vc
 

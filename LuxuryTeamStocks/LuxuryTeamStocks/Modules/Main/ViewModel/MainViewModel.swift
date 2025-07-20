@@ -17,6 +17,7 @@ enum MainViewModelEvent {
     case categoryChanged(Int)
     case addToFavoriteButtonTapped(StockModel)
     case filteringModeStarted(String)
+    case errorLoadingData
 }
 
 final class MainViewModel: MainViewModelling {
@@ -30,13 +31,15 @@ final class MainViewModel: MainViewModelling {
     private var isFiltering = false
     private var filterText: String = ""
 
-    private var userDefaults = UDManager.shared
+    private var networkService: NetworkServiceProtocol
+    private var udManager: UDManagerProtocol
 
     weak var view: MainViewController?
 
     // MARK: - Init
-    init() {
-        getFavoritesFromUD()
+    init(networkService: NetworkServiceProtocol, udManager: UDManagerProtocol) {
+        self.networkService = networkService
+        self.udManager = udManager
     }
 }
 
@@ -44,6 +47,7 @@ final class MainViewModel: MainViewModelling {
 extension MainViewModel {
     func viewLoaded() {
         view?.setupInitialState()
+        fetchDataFromServer()
         loadData()
     }
 
@@ -53,12 +57,34 @@ extension MainViewModel {
         case .categoryChanged(let tag): tabSelected(tag)
         case .addToFavoriteButtonTapped(let stock): addOrRemoveFromFavorites(stock)
         case .filteringModeStarted(let filterText): filterStocks(by: filterText)
+        case .errorLoadingData: loadData()
         }
     }
 }
 
 // MARK: - Supporting methods
 private extension MainViewModel {
+    func fetchDataFromServer() {
+        Task {
+            do {
+                data = try await networkService.fetchDataFromServer()
+                print(data)
+            } catch {
+
+            }
+        }
+    }
+
+    func checkDataAndUpdateView() {
+        isDataValid() ? updateData() : getError()
+    }
+
+    func loadData() {
+        view?.showLoading()
+//        mappingMockData()
+        checkDataAndUpdateView()
+    }
+
     func mappingMockData() {
         let favSymbols = Set(favorites.map { $0.symbol })
         self.data = mockData.map { stock in
@@ -98,15 +124,9 @@ private extension MainViewModel {
         updateData()
     }
 
-    func loadData() {
-        view?.loading()
-        mappingMockData()
-        checkDataAndUpdateView()
-    }
-
     func getFavoritesFromUD() {
         print(#function)
-        self.favorites = userDefaults.loadFavouritesFromUD()
+        self.favorites = udManager.loadFavouritesFromUD()
     }
 
     func getCorrectData() -> [StockModel] {
@@ -126,10 +146,6 @@ private extension MainViewModel {
 
     func updateFavorites() {
         favorites = data.filter { $0.isFavorite }
-    }
-
-    func checkDataAndUpdateView() {
-        isDataValid() ? updateData() : getError()
     }
 
     func isDataValid() -> Bool {
@@ -177,8 +193,8 @@ private extension MainViewModel {
 
     func saveToUD(_ stock: StockModel) {
         switch !stock.isFavorite {
-        case true: userDefaults.addToFavorites(stock)
-        case false: userDefaults.removeFromFavorites(stock)
+        case true: udManager.addToFavorites(stock)
+        case false: udManager.removeFromFavorites(stock)
         }
     }
 }

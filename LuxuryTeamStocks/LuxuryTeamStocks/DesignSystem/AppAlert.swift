@@ -9,9 +9,17 @@
 import UIKit
 
 final class AppAlert {
-    static func create() -> UIAlertController {
+    static func create(retryHandler: @escaping () -> Void) -> UIAlertController {
         let alert = UIAlertController(title: AppConstants.alertsError.loadingError, message: "", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel)
+        alert.addAction(cancelAction)
+
+        let retry = UIAlertAction(title: "Повторить", style: .default) { _ in
+            retryHandler()
+        }
+        alert.addAction(retry)
+
         return alert
     }
 }

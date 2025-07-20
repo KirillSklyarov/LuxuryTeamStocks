@@ -7,6 +7,13 @@
 
 import UIKit
 
+protocol MainViewInterface {
+    func setupInitialState()
+    func showLoading()
+    func configure(with data: [StockModel], _ isFavoritesChosen: Bool, _ isFilteringMode: Bool, animate: Bool)
+    func showError()
+}
+
 final class MainViewController: UIViewController {
 
     // MARK: - UI Properties
@@ -23,8 +30,8 @@ final class MainViewController: UIViewController {
 
     private lazy var contentStack = AppStackView([searchBar, headerAndTableViewStack], axis: .vertical, spacing: 20)
 
-    var onAddToFavButtonTapped: ((StockModel) -> Void)?
 
+    var onAddToFavButtonTapped: ((StockModel) -> Void)?
     let viewModel: MainViewModelling
 
     // MARK: - Init
@@ -32,7 +39,7 @@ final class MainViewController: UIViewController {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -42,16 +49,49 @@ final class MainViewController: UIViewController {
         super.viewDidLoad()
         viewModel.viewLoaded()
     }
+}
 
+// MARK: - MainViewInterface
+extension MainViewController: MainViewInterface {
+    func setupInitialState() {
+        setupUI()
+        setupAction()
+    }
 
-    func configureUI() {
+    func showLoading() {
+        activityIndicator.startAnimating()
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            isHideContent(true)
+        }
+    }
+
+    func configure(with data: [StockModel], _ isFavoritesChosen: Bool, _ isFilteringMode: Bool, animate: Bool = true) {
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            isHideContent(false)
+        }
+
+        activityIndicator.stopAnimating()
+        updateUI(with: data, isFavoritesChosen: isFavoritesChosen, isFilteringMode: isFilteringMode, animate: animate)
+    }
+
+    func showError() {
+        activityIndicator.stopAnimating()
+        isHideContent(true)
+        showAlert()
+    }
+}
+
+// MARK: - SetupUI
+private extension MainViewController {
+    func setupUI() {
         view.backgroundColor = .systemBackground
         configureContentStack()
         setupSearchPlaceholder()
         configureActivityIndicator()
         setupDismissKeyboardGesture()
-
-        setupAction()
     }
 
     func configureContentStack() {
@@ -71,6 +111,21 @@ final class MainViewController: UIViewController {
         ])
     }
 
+    func configureActivityIndicator() {
+        view.addSubviews(activityIndicator)
+        setupActivityIndicatorLayout()
+    }
+
+    func setupActivityIndicatorLayout() {
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+}
+
+// MARK: - Actions
+private extension MainViewController {
     func setupAction() {
         categoryHeader.tabSelected = { [weak self] tag in
             self?.viewModel.eventHandler(.categoryChanged(tag))
@@ -117,7 +172,7 @@ final class MainViewController: UIViewController {
         }
     }
 
-    private func swapHeaders(with text: String) {
+    func swapHeaders(with text: String) {
         if !text.isEmpty {
             swapHeadersToSearching()
         } else {
@@ -125,7 +180,7 @@ final class MainViewController: UIViewController {
         }
     }
 
-    private func swapHeadersToSearching() {
+    func swapHeadersToSearching() {
         guard let index = headerAndTableViewStack.arrangedSubviews.firstIndex(of: self.categoryHeader) else { return }
         headerAndTableViewStack.removeArrangedSubview(categoryHeader)
         categoryHeader.removeFromSuperview()
@@ -134,7 +189,7 @@ final class MainViewController: UIViewController {
         contentStack.spacing = 32
     }
 
-    private func swapHeadersToBaseMode() {
+    func swapHeadersToBaseMode() {
         guard let index = headerAndTableViewStack.arrangedSubviews.firstIndex(of: self.searchHeaderView) else { print("stockTitle not found"); return }
         headerAndTableViewStack.removeArrangedSubview(searchHeaderView)
         searchHeaderView.removeFromSuperview()
@@ -142,7 +197,7 @@ final class MainViewController: UIViewController {
         contentStack.spacing = 20
     }
 
-    private func showSearchPlaceholder() {
+    func showSearchPlaceholder() {
         UIView.animate(withDuration: 0.3) { [weak self] in
             guard let self else { return }
             searchPlaceholderCollectionView.alpha = 1
@@ -150,7 +205,7 @@ final class MainViewController: UIViewController {
         }
     }
 
-    private func hideSearchPlaceholder() {
+    func hideSearchPlaceholder() {
         UIView.animate(withDuration: 0.3) { [weak self] in
             guard let self else { return }
             searchPlaceholderCollectionView.alpha = 0
@@ -158,65 +213,25 @@ final class MainViewController: UIViewController {
         }
     }
 
-     func configureActivityIndicator() {
-        view.addSubviews(activityIndicator)
-        setupActivityIndicatorLayout()
-    }
-
-    func setupActivityIndicatorLayout() {
-        NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
-    }
-
-    func setupInitialState() {
-        configureUI()
-    }
-
-    func loading() {
-        activityIndicator.startAnimating()
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            isHideContent(true)
-        }
-    }
-
     func isHideContent(_ isHide: Bool) {
-        contentTableView.alpha = isHide ? 0 : 1
-    }
-
-    func configure(with data: [StockModel], _ isFavoritesChosen: Bool, _ isFilteringMode: Bool, animate: Bool = true) {
-
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            isHideContent(false)
-        }
-
-        activityIndicator.stopAnimating()
-        updateUI(with: data, isFavoritesChosen: isFavoritesChosen, isFilteringMode: isFilteringMode, animate: animate)
+        contentStack.alpha = isHide ? 0 : 1
     }
 
     func updateUI(with data: [StockModel], isFavoritesChosen: Bool, isFilteringMode: Bool, animate: Bool) {
         contentTableView.updateUI(with: data, isFavoriteChosen: isFavoritesChosen, isFilteringMode: isFilteringMode, animate: animate)
-
-    }
-}
-
-// MARK: - Error handler
-extension MainViewController {
-    func showError() {
-        activityIndicator.stopAnimating()
-        showAlert()
     }
 
-    private func showAlert() {
-        let alert = AppAlert.create()
+    func showAlert() {
+        let alert = AppAlert.create { [weak self] in
+            guard let self else { return }
+            viewModel.eventHandler(.errorLoadingData)
+        }
+
         present(alert, animated: true)
     }
 }
 
-// MARK: - Hide the keeboard
+// MARK: - Hide the keyboard
 private extension MainViewController {
     func setupDismissKeyboardGesture() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
