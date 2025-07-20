@@ -17,7 +17,7 @@ final class StocksTableViewCell: UITableViewCell {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.heightAnchor.constraint(equalToConstant: 52).isActive = true
         imageView.widthAnchor.constraint(equalToConstant: 52).isActive = true
-        imageView.layer.cornerRadius = AppConstants.CornerRadius.medium
+        imageView.layer.cornerRadius = AppConstants.CornerRadius.medium16
         imageView.clipsToBounds = true
         return imageView
     }()
@@ -44,7 +44,7 @@ final class StocksTableViewCell: UITableViewCell {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = AppConstants.Colors.gray
-        view.layer.cornerRadius = AppConstants.CornerRadius.medium
+        view.layer.cornerRadius = AppConstants.CornerRadius.medium16
         view.clipsToBounds = true
         return view
     }()

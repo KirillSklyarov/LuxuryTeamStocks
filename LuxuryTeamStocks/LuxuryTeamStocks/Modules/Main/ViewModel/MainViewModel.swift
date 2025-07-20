@@ -16,6 +16,7 @@ protocol MainViewModelling: AnyObject {
 
 final class MainViewModel: MainViewModelling {
 
+    // MARK: - Properties
     private var data: [StockModel] = []
     private var favorites: [StockModel] = []
     private var displayData: [StockModel] = []
@@ -28,36 +29,51 @@ final class MainViewModel: MainViewModelling {
 
     weak var view: MainViewController?
 
+    // MARK: - Init
     init() {
         getFavoritesFromUD()
     }
+}
 
+// MARK: - MainViewModelling
+extension MainViewModel {
     func viewLoaded() {
-//        print(#function)
+        //        print(#function)
         view?.setupInitialState()
         loadData()
     }
 
-    func filterStocks(by text: String) {
-        let base = isFavoritesChosen ? favorites : data
-        print(#function)
+    func tabSelected(_ index: Int) {
+        //        print(correctData)
 
+        if index == 0 {
+            isFavoritesChosen = false
+        } else if index == 1 {
+            isFavoritesChosen = true
+        }
+        updateView()
+    }
+
+    func addOrRemoveFromFavorites(_ stock: StockModel) {
+        setStockAsFavorite(stock)
+        updateView(animate: false)
+    }
+
+    func filterStocks(by text: String) {
         if text.isEmpty {
             isFiltering = false
             filterText = ""
-            displayData = base
         } else {
             isFiltering = true
             filterText = text
-            displayData = base.filter {
-                $0.symbol.lowercased().contains(text.lowercased()) ||
-                $0.name.lowercased().contains(text.lowercased())
-            }
         }
-        view?.configure(with: displayData, isFavoritesChosen, animate: true)
+        updateView()
     }
+}
 
-    private func mappingMockData() {
+// MARK: - Supporting methods
+private extension MainViewModel {
+    func mappingMockData() {
         let favSymbols = Set(favorites.map { $0.symbol })
         self.data = mockData.map { stock in
             var copy = stock
@@ -72,39 +88,28 @@ final class MainViewModel: MainViewModelling {
         checkDataAndUpdateView()
     }
 
-    private func getFavoritesFromUD() {
+    func getFavoritesFromUD() {
         self.favorites = userDefaults.loadFavouritesFromUD()
         //        print(favourites)
     }
 
-    func tabSelected(_ index: Int) {
-//        print(correctData)
-
-        if index == 0 {
-            isFavoritesChosen = false
-            let correctData = getCorrectData()
-            displayData = correctData
-        } else if index == 1 {
-            isFavoritesChosen = true
-            let correctData = getCorrectData()
-            displayData = correctData.filter { $0.isFavorite }
-        }
-        view?.configure(with: displayData, isFavoritesChosen)
-    }
-
-    private func getCorrectData() -> [StockModel] {
+    func getCorrectData() -> [StockModel] {
+        updateFavorites()
         let base = isFavoritesChosen ? favorites : data
         print(base, filterText)
-        var newData: [StockModel] = []
+
         if filterText.isEmpty {
-            newData = base
+            return base
         } else {
-            newData = base.filter {
+            return base.filter {
                 $0.symbol.lowercased().contains(filterText.lowercased()) ||
                 $0.name.lowercased().contains(filterText.lowercased())
             }
         }
-        return newData
+    }
+
+    func updateFavorites() {
+        favorites = data.filter { $0.isFavorite }
     }
 
     func checkDataAndUpdateView() {
@@ -115,9 +120,9 @@ final class MainViewModel: MainViewModelling {
         return !data.isEmpty
     }
 
-    private func updateView(animate: Bool = true) {
-        let fav = data.filter { $0.isFavorite }
-        displayData = isFavoritesChosen ? fav : data
+    func updateView(animate: Bool = true) {
+        updateFavorites()
+        displayData = getCorrectData()
         view?.configure(with: displayData, isFavoritesChosen, animate: animate)
     }
 
@@ -127,12 +132,7 @@ final class MainViewModel: MainViewModelling {
         }
     }
 
-    func addOrRemoveFromFavorites(_ stock: StockModel) {
-        modifyData(with: stock)
-        updateView(animate: false)
-    }
-
-    private func modifyData(with stock: StockModel) {
+    func setStockAsFavorite(_ stock: StockModel) {
         if let index = data.firstIndex(of: stock) {
             data[index].isFavorite.toggle()
         }

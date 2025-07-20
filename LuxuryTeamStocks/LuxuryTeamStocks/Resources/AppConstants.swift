@@ -35,14 +35,15 @@ struct AppConstants {
     }
 
     enum CornerRadius {
-        static let medium: CGFloat = 16
-        static let large: CGFloat = 40
+        static let medium16: CGFloat = 16
+        static let large20: CGFloat = 20
     }
 
     enum Fonts {
         static let headline = UIFont(name: "Montserrat-Bold", size: 28)
         static let regular = UIFont(name: "Montserrat-Bold", size: 18)
         static let searchBar = UIFont(name: "Montserrat-SemiBold", size: 16)
+        static let searchPlaceholder = UIFont(name: "Montserrat-SemiBold", size: 12)
         static let body = UIFont(name: "Montserrat-SemiBold", size: 11)
     }
 

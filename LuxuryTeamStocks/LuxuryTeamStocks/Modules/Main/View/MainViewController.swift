@@ -13,6 +13,7 @@ final class MainViewController: UIViewController {
     private lazy var searchBar = SearchView()
     private lazy var categoryHeader = CategoryHeaderView()
     private lazy var contentTableView = StocksTableView()
+    private lazy var searchPlaceholderCollectionView = SearchCollectionView()
     private lazy var activityIndicator = AppActivityIndicator()
 
     private lazy var contentStack = AppStackView([searchBar, categoryHeader, contentTableView], axis: .vertical, spacing: 5)
@@ -42,6 +43,7 @@ final class MainViewController: UIViewController {
         view.backgroundColor = .systemBackground
 
         configureContentStack()
+        setupSearchPlaceholder()
         configureActivityIndicator()
         setupDismissKeyboardGesture()
         setupAction()
@@ -50,6 +52,11 @@ final class MainViewController: UIViewController {
     func configureContentStack() {
         view.addSubviews(contentStack)
         contentStack.setConstraints(isSafeArea: true, allInsets: 16)
+    }
+
+    func setupSearchPlaceholder() {
+        view.addSubviews(searchPlaceholderCollectionView)
+        searchPlaceholderCollectionView.setConstraints(isSafeArea: true, allInsets: 16)
     }
 
     func setupAction() {

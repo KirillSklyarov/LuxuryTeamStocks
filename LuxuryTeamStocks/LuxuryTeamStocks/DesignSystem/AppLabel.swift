@@ -13,6 +13,8 @@ enum AppLabelType {
     case subtitle
     case rate
     case rateChange
+    case searchHeader
+    case searchRequest
 }
 
 final class AppLabel: UILabel {
@@ -49,6 +51,12 @@ private extension AppLabel {
             font = AppConstants.Fonts.body
             textColor = AppConstants.Colors.black
             textAlignment = .right
+        case .searchRequest:
+            font = AppConstants.Fonts.searchPlaceholder
+            textColor = AppConstants.Colors.black
+        case .searchHeader:
+            textColor = AppConstants.Colors.black
+            font = AppConstants.Fonts.regular
         }
         self.numberOfLines = numberOfLines
     }
