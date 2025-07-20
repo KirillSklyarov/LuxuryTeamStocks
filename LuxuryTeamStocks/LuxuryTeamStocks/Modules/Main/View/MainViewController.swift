@@ -71,9 +71,9 @@ extension MainViewController: MainViewInterface {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             isHideContent(false)
+            activityIndicator.stopAnimating()
         }
 
-        activityIndicator.stopAnimating()
         updateUI(with: data, isFavoritesChosen: isFavoritesChosen, isFilteringMode: isFilteringMode, animate: animate)
     }
 

@@ -40,6 +40,7 @@ final class MainViewModel: MainViewModelling {
     init(networkService: NetworkServiceProtocol, udManager: UDManagerProtocol) {
         self.networkService = networkService
         self.udManager = udManager
+        getFavoritesFromUD()
     }
 }
 
@@ -47,7 +48,6 @@ final class MainViewModel: MainViewModelling {
 extension MainViewModel {
     func viewLoaded() {
         view?.setupInitialState()
-        fetchDataFromServer()
         loadData()
     }
 
@@ -64,35 +64,52 @@ extension MainViewModel {
 
 // MARK: - Supporting methods
 private extension MainViewModel {
-    func fetchDataFromServer() {
+    func loadData() {
+        view?.showLoading()
         Task {
             do {
-                data = try await networkService.fetchDataFromServer()
-                print(data)
+                try await fetchDataFromServer()
+                setFavoritesToFetchedData()
+                checkDataAndUpdateView()
             } catch {
-
+                getError()
             }
         }
     }
 
-    func checkDataAndUpdateView() {
-        isDataValid() ? updateData() : getError()
+    func fetchDataFromServer() async throws {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        self.data = try await networkService.fetchDataFromServer()
     }
 
-    func loadData() {
-        view?.showLoading()
-//        mappingMockData()
-        checkDataAndUpdateView()
-    }
-
-    func mappingMockData() {
+    func setFavoritesToFetchedData() {
         let favSymbols = Set(favorites.map { $0.symbol })
-        self.data = mockData.map { stock in
+        self.data = data.map { stock in
             var copy = stock
             copy.isFavorite = favSymbols.contains(stock.symbol)
             return copy
         }
     }
+
+
+    func checkDataAndUpdateView() {
+        isDataValid() ? updateData() : getError()
+    }
+
+    func isDataValid() -> Bool {
+        return !data.isEmpty
+    }
+
+    func updateData(animate: Bool = true) {
+        updateFavorites()
+        displayData = getCorrectData()
+        if isFiltering {
+            showFirstFourElements()
+        } else {
+            updateView(animate: animate)
+        }
+    }
+
 
     func showAllFilteredElements(animate: Bool = true) {
         displayData = getCorrectData()
@@ -125,8 +142,8 @@ private extension MainViewModel {
     }
 
     func getFavoritesFromUD() {
-        print(#function)
-        self.favorites = udManager.loadFavouritesFromUD()
+//        print(#function)
+        self.favorites = udManager.loadFavoritesFromUD()
     }
 
     func getCorrectData() -> [StockModel] {
@@ -145,21 +162,7 @@ private extension MainViewModel {
     }
 
     func updateFavorites() {
-        favorites = data.filter { $0.isFavorite }
-    }
-
-    func isDataValid() -> Bool {
-        return !data.isEmpty
-    }
-
-    func updateData(animate: Bool = true) {
-        updateFavorites()
-        displayData = getCorrectData()
-        if isFiltering {
-            showFirstFourElements()
-        } else {
-            updateView(animate: animate)
-        }
+        favorites =  data.filter { $0.isFavorite }
     }
 
     func showFirstFourElements(animate: Bool = true) {

@@ -41,7 +41,9 @@ final class StocksTableView: UITableView {
 
         snapshot.reloadItems(data)
 
-        diffableDataSource.apply(snapshot, animatingDifferences: animate)
+        DispatchQueue.main.async { [weak self] in
+            self?.diffableDataSource.apply(snapshot, animatingDifferences: animate)
+        }
     }
 }
 
