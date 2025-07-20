@@ -21,17 +21,17 @@ final class CategoryHeaderView: UIView {
         super.init(frame: frame)
         setupUI()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-//    func setupUI(_ isFavoriteChosen: Bool) -> UIView {
+    //    func setupUI(_ isFavoriteChosen: Bool) -> UIView {
     func setupUI() {
         addSubviews(categoriesStackView)
         categoriesStackView.setConstraints()
 
-//        categoriesStackView.backgroundColor = .systemBackground
+        //        categoriesStackView.backgroundColor = .systemBackground
 
         stockButton.onButtonTapped = { [weak self] tag in
             guard let self = self else { return }
@@ -44,25 +44,8 @@ final class CategoryHeaderView: UIView {
             guard let self = self else { return }
             stockButton.applySelectedStyle(false)
             favoriteButton.applySelectedStyle(true)
-//            print(tag)
+            //            print(tag)
             tabSelected?(tag)
         }
     }
-
-
-
-//    func setup() {
-//        configureGlassImageView()
-//
-//        addSubviews(roundContainer)
-//        roundContainer.setConstraints()
-//    }
-//
-//    func configureGlassImageView() {
-//        roundContainer.addSubviews(searchStackView)
-//        NSLayoutConstraint.activate([
-//            searchStackView.centerYAnchor.constraint(equalTo: roundContainer.centerYAnchor),
-//            searchStackView.leadingAnchor.constraint(equalTo: roundContainer.leadingAnchor, constant: 20)
-//        ])
-//    }
 }

@@ -105,7 +105,23 @@ extension SearchView: UITextFieldDelegate {
 
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.placeholder = ""
+        changeLeftImage(.leftArrow)
         onBeginEditing?()
+    }
+
+    enum LeftImages: String {
+        case glass
+        case leftArrow
+    }
+
+    private func changeLeftImage(_ imageType: LeftImages) {
+        glassImageView.image = UIImage(named: imageType.rawValue)
+        let tap = UITapGestureRecognizer(target: self, action: #selector(backToTableView))
+        glassImageContainer.addGestureRecognizer(tap)
+    }
+
+    @objc private func backToTableView() {
+        exitSearchMode()
     }
 }
 
@@ -138,9 +154,15 @@ private extension SearchView {
     func setupActions() {
         clearTextButton.onClearTextButtonTapped = { [weak self] in
             guard let self else { return }
-            textField.text = ""
-            textField.placeholder = "Find company or ticker"
-            onTextChanged?(textField.text ?? "")
+            exitSearchMode()
         }
+    }
+
+    private func exitSearchMode() {
+        textField.resignFirstResponder()
+        textField.text = ""
+        textField.placeholder = "Find company or ticker"
+        changeLeftImage(.glass)
+        onTextChanged?(textField.text ?? "")
     }
 }

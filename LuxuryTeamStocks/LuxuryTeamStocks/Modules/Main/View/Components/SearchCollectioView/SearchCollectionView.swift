@@ -56,6 +56,7 @@ final class SearchCollectionView: UICollectionView {
 
         showsVerticalScrollIndicator = false
         alwaysBounceVertical = true
+        isScrollEnabled = false
         translatesAutoresizingMaskIntoConstraints = false
 
         registerCell(SearchCell.self)
@@ -74,8 +75,7 @@ extension SearchCollectionView: UICollectionViewDataSource {
     func numberOfSections(in cv: UICollectionView) -> Int { CollectionSection.allCases.count
     }
 
-    func collectionView(_ cv: UICollectionView,
-                        numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ cv: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch section {
         case 0: CollectionSection.popular.items.count
         case 1: CollectionSection.history.items.count
@@ -105,7 +105,7 @@ extension SearchCollectionView: UICollectionViewDataSource {
     // Для заголовков:
     func collectionView(_ cv: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = cv.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "CollectionHeaderView", for: indexPath) as! CollectionHeaderView
-        let title = CollectionSection(rawValue: indexPath.section)!.title
+        let title = CollectionSection(rawValue: indexPath.section)?.title ?? ""
         header.configure(text: title)
         return header
     }

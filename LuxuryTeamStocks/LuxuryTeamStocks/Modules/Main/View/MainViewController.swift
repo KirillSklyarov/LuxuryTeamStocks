@@ -12,11 +12,16 @@ final class MainViewController: UIViewController {
     // MARK: - UI Properties
     private lazy var searchBar = SearchView()
     private lazy var categoryHeader = CategoryHeaderView()
+
+    private lazy var stockTitle = AppLabel(type: .title, title: "Stocks")
+
     private lazy var contentTableView = StocksTableView()
     private lazy var searchPlaceholderCollectionView = SearchCollectionView()
     private lazy var activityIndicator = AppActivityIndicator()
 
-    private lazy var contentStack = AppStackView([searchBar, categoryHeader, contentTableView], axis: .vertical, spacing: 5)
+    private lazy var headerAndTableViewStack = AppStackView([ categoryHeader, contentTableView], axis: .vertical)
+
+    private lazy var contentStack = AppStackView([searchBar, headerAndTableViewStack], axis: .vertical, spacing: 20)
 
     var onAddToFavButtonTapped: ((StockModel) -> Void)?
 
@@ -58,8 +63,6 @@ final class MainViewController: UIViewController {
         view.addSubviews(searchPlaceholderCollectionView)
         searchPlaceholderCollectionView.alpha = 0
 
-//        searchPlaceholderCollectionView.isHidden = true
-
         NSLayoutConstraint.activate([
             searchPlaceholderCollectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 32),
             searchPlaceholderCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -87,7 +90,11 @@ final class MainViewController: UIViewController {
 
         searchBar.onTextChanged = { [weak self] text in
             guard let self else { return }
+            print(#function)
+
+            swapHeaders(with: text)
             hideSearchPlaceholder()
+
             viewModel.filterStocks(by: text)
         }
 
@@ -100,9 +107,37 @@ final class MainViewController: UIViewController {
             stockName in
             guard let self else { return }
             searchBar.setQueryText(stockName)
+
+            swapHeaders(with: stockName)
             hideSearchPlaceholder()
+
             viewModel.filterStocks(by: stockName)
         }
+    }
+
+    private func swapHeaders(with text: String) {
+        if !text.isEmpty {
+            swapHeadersToSearching()
+        } else {
+            swapHeadersToBaseMode()
+        }
+    }
+
+    private func swapHeadersToSearching() {
+        guard let index = headerAndTableViewStack.arrangedSubviews.firstIndex(of: self.categoryHeader) else { print("categoryHeader not found"); return }
+        headerAndTableViewStack.removeArrangedSubview(categoryHeader)
+        categoryHeader.removeFromSuperview()
+        headerAndTableViewStack.insertArrangedSubview(self.stockTitle, at: index)
+
+        contentStack.spacing = 32
+    }
+
+    private func swapHeadersToBaseMode() {
+        guard let index = headerAndTableViewStack.arrangedSubviews.firstIndex(of: self.stockTitle) else { print("stockTitle not found"); return }
+        headerAndTableViewStack.removeArrangedSubview(stockTitle)
+        stockTitle.removeFromSuperview()
+        headerAndTableViewStack.insertArrangedSubview(self.categoryHeader, at: index)
+        contentStack.spacing = 20
     }
 
     private func showSearchPlaceholder() {
@@ -121,7 +156,7 @@ final class MainViewController: UIViewController {
         }
     }
 
-    func configureActivityIndicator() {
+     func configureActivityIndicator() {
         view.addSubviews(activityIndicator)
         setupActivityIndicatorLayout()
     }
@@ -180,7 +215,7 @@ extension MainViewController {
     }
 }
 
-
+// MARK: - Hide the keeboard
 private extension MainViewController {
     func setupDismissKeyboardGesture() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))

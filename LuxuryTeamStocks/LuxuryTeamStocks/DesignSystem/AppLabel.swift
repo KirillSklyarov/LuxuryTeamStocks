@@ -20,9 +20,9 @@ enum AppLabelType {
 final class AppLabel: UILabel {
 
     // MARK: - Init
-    init(type: AppLabelType, numberOfLines: Int = 1) {
+    init(type: AppLabelType, numberOfLines: Int = 1, title: String? = nil) {
         super.init(frame: .zero)
-        configure(type, numberOfLines: numberOfLines)
+        configure(type, numberOfLines: numberOfLines, title: title)
     }
 
     required init?(coder: NSCoder) {
@@ -32,7 +32,7 @@ final class AppLabel: UILabel {
 
 // MARK: - Setup UI
 private extension AppLabel {
-    func configure(_ type: AppLabelType, numberOfLines: Int) {
+    func configure(_ type: AppLabelType, numberOfLines: Int, title: String?) {
         switch type {
         case .category:
             font = AppConstants.Fonts.headline
@@ -58,6 +58,7 @@ private extension AppLabel {
             textColor = AppConstants.Colors.black
             font = AppConstants.Fonts.regular
         }
+        self.text = title
         self.numberOfLines = numberOfLines
     }
 }

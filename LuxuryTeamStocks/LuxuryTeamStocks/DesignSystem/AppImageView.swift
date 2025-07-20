@@ -10,6 +10,7 @@ import UIKit
 
 enum AppImageViewType {
     case glass
+    case arrow
 //    case title
 //    case subtitle
 //    case rate
@@ -38,21 +39,11 @@ private extension AppImageView {
             translatesAutoresizingMaskIntoConstraints = false
             heightAnchor.constraint(equalToConstant: 16).isActive = true
             widthAnchor.constraint(equalToConstant: 16).isActive = true
-
-//        case .title:
-//            font = AppConstants.Fonts.regular
-//            textColor = AppConstants.Colors.black
-//        case .subtitle:
-//            font = AppConstants.Fonts.body
-//            textColor = AppConstants.Colors.black
-//            self.numberOfLines = numberOfLines
-//        case .rate:
-//            font = AppConstants.Fonts.regular
-//            textColor = AppConstants.Colors.black
-//        case .rateChange:
-//            font = AppConstants.Fonts.body
-//            textColor = AppConstants.Colors.black
-//            textAlignment = .right
+        case .arrow:
+            image = UIImage(named: "leftArrow")
+            translatesAutoresizingMaskIntoConstraints = false
+            heightAnchor.constraint(equalToConstant: 16).isActive = true
+            widthAnchor.constraint(equalToConstant: 16).isActive = true
         }
 //        self.numberOfLines = numberOfLines
     }

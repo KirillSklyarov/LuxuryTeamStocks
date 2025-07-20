@@ -96,7 +96,7 @@ private extension MainViewModel {
     func getCorrectData() -> [StockModel] {
         updateFavorites()
         let base = isFavoritesChosen ? favorites : data
-        print(base, filterText)
+//        print(base, filterText)
 
         if filterText.isEmpty {
             return base
