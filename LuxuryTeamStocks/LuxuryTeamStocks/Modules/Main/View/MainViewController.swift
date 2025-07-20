@@ -41,11 +41,11 @@ final class MainViewController: UIViewController {
 
     func configureUI() {
         view.backgroundColor = .systemBackground
-
         configureContentStack()
         setupSearchPlaceholder()
         configureActivityIndicator()
         setupDismissKeyboardGesture()
+
         setupAction()
     }
 
@@ -94,6 +94,14 @@ final class MainViewController: UIViewController {
         searchBar.onBeginEditing = { [weak self] in
             guard let self else { return }
             showSearchPlaceholder()
+        }
+
+        searchPlaceholderCollectionView.onCellTapped = { [weak self]
+            stockName in
+            guard let self else { return }
+            searchBar.setQueryText(stockName)
+            hideSearchPlaceholder()
+            viewModel.filterStocks(by: stockName)
         }
     }
 

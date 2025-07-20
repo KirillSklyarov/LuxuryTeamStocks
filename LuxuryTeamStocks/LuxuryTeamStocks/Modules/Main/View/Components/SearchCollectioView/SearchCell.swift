@@ -12,12 +12,19 @@ final class SearchCell: UICollectionViewCell {
 
     private lazy var label = AppLabel(type: .searchRequest)
 
+    var onLabelTapped: ((String) -> Void)?
+
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
     }
 
     required init?(coder: NSCoder) { fatalError() }
+
+    func configure(with text: String) {
+        label.text = text
+    }
 
     private func setupUI() {
         contentView.layer.cornerRadius = AppConstants.CornerRadius.large20
@@ -26,9 +33,12 @@ final class SearchCell: UICollectionViewCell {
         contentView.addSubviews(label)
 
         label.setConstraints(insets: UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 16))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(ButtonTapped))
+        addGestureRecognizer(tap)
     }
 
-    func configure(with text: String) {
-        label.text = text
+    @objc private func ButtonTapped() {
+        let stockName = label.text ?? ""
+        onLabelTapped?(stockName)
     }
 }

@@ -27,6 +27,8 @@ enum CollectionSection: Int, CaseIterable {
 
 final class SearchCollectionView: UICollectionView {
 
+    var onCellTapped: ((String) -> Void)?
+
     override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         let layout = Self.setupUICollectionViewFlowLayout()
         super.init(frame: frame, collectionViewLayout: layout)
@@ -61,6 +63,10 @@ final class SearchCollectionView: UICollectionView {
                                   viewClass: CollectionHeaderView.self
         )
     }
+
+    private func setupAction() {
+
+    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -87,6 +93,12 @@ extension SearchCollectionView: UICollectionViewDataSource {
         }
 
         cell.configure(with: text)
+
+        cell.onLabelTapped = { [weak self] stockName in
+            guard let self else { return }
+            onCellTapped?(stockName)
+        }
+
         return cell
     }
 

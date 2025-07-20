@@ -17,6 +17,17 @@ final class SearchView: UIView {
         return view
     }()
     private lazy var glassImageView = AppImageView(type: .glass)
+    private lazy var glassImageContainer: UIView = {
+        let view = UIView()
+        view.addSubviews(glassImageView)
+        glassImageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            glassImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            glassImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+        view.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        return view
+    }()
 
     private let textField: UITextField = {
         let textField = UITextField()
@@ -29,6 +40,7 @@ final class SearchView: UIView {
         textField.clearButtonMode = .never
         textField.rightViewMode = .whileEditing
         textField.font = AppConstants.Fonts.searchBar
+        textField.tintColor = AppConstants.Colors.black
         return textField
     }()
 
@@ -45,8 +57,7 @@ final class SearchView: UIView {
         return view
     }()
 
-    private lazy var searchStackView = AppStackView([glassImageView, textField], axis: .horizontal, spacing: 10)
-
+    private lazy var searchStackView = AppStackView([glassImageContainer, textField], axis: .horizontal, spacing: 10)
 
     private var searchHeightConstraint: NSLayoutConstraint!
 
@@ -69,10 +80,15 @@ final class SearchView: UIView {
         super.layoutSubviews()
         roundContainer.layer.cornerRadius = roundContainer.frame.height / 2
         clearButtonContainer.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        searchStackView.heightAnchor.constraint(equalTo: roundContainer.heightAnchor, multiplier: 0.8).isActive = true
     }
 
     func isNeedToHideSearchBar(_ bool: Bool) {
         searchHeightConstraint.constant = bool ? 0 : 48
+    }
+
+    func setQueryText(_ text: String) {
+        textField.text = text
     }
 }
 
@@ -115,8 +131,7 @@ private extension SearchView {
         NSLayoutConstraint.activate([
             searchStackView.centerYAnchor.constraint(equalTo: roundContainer.centerYAnchor),
             searchStackView.leadingAnchor.constraint(equalTo: roundContainer.leadingAnchor, constant: 16),
-            searchStackView.trailingAnchor.constraint(equalTo: roundContainer.trailingAnchor, constant: -16)
-
+            searchStackView.trailingAnchor.constraint(equalTo: roundContainer.trailingAnchor, constant: -16),
         ])
     }
 
