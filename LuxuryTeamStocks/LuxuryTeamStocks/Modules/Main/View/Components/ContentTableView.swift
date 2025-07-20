@@ -15,12 +15,9 @@ final class StocksTableView: UITableView {
 
     private var diffableDataSource: UITableViewDiffableDataSource<Section, StockModel>!
 
-    private var chosenCell: StocksTableViewCell?
-    private var data: [StockModel]?
+    private var isFavoriteChosen = false
+    private var isFilteringMode = false
 
-    private var isFavoriteChosen: Bool = true
-
-    var onGetFilteredData: ((String) -> Void)?
     var onAddToFavButtonTapped: ((StockModel) -> Void)?
     var onHideSearchBar: ((Bool) -> Void)?
 
@@ -34,17 +31,9 @@ final class StocksTableView: UITableView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setIsFavoriteChosen(_ isFavoriteChosen: Bool) {
-        self.isFavoriteChosen = isFavoriteChosen
-    }
-
-    func filterData(by text: String) {
-        onGetFilteredData?(text)
-    }
-
-    func updateUI(with data: [StockModel], isFavoriteChosen: Bool, animate: Bool = true) {
-        self.isFavoriteChosen = isFavoriteChosen
-//        print("isFavoriteChosen \(self.isFavoriteChosen)")
+    func updateUI(with data: [StockModel], isFavoriteChosen: Bool, isFilteringMode: Bool, animate: Bool = true) {
+        setIsFavoriteChosen(isFavoriteChosen)
+        setIsFilteringMode(isFilteringMode)
 
         var snapshot = NSDiffableDataSourceSnapshot<Section, StockModel>()
         snapshot.appendSections([.main])
@@ -97,16 +86,23 @@ extension StocksTableView: UITableViewDelegate {
 
 // MARK: - Supporting methods
 private extension StocksTableView {
-    
     func designEvenAndOddRows(for indexPath: IndexPath) -> Bool {
         let isGray: Bool
 
-        if isFavoriteChosen {
+        if isFavoriteChosen || isFilteringMode {
             isGray = indexPath.row.isMultiple(of: 2)
         } else {
             isGray = !indexPath.row.isMultiple(of: 2)
         }
         return isGray
+    }
+
+    func setIsFavoriteChosen(_ isFavoriteChosen: Bool) {
+        self.isFavoriteChosen = isFavoriteChosen
+    }
+
+    func setIsFilteringMode(_ isFilteringMode: Bool) {
+        self.isFilteringMode = isFilteringMode
     }
 }
 

@@ -186,20 +186,19 @@ final class MainViewController: UIViewController {
         contentTableView.alpha = isHide ? 0 : 1
     }
 
-    func configure(with data: [StockModel], _ isFavoritesChosen: Bool, animate: Bool = true) {
+    func configure(with data: [StockModel], _ isFavoritesChosen: Bool, _ isFilteringMode: Bool, animate: Bool = true) {
 
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             isHideContent(false)
         }
 
-//        isHideContent(false)
         activityIndicator.stopAnimating()
-        updateUI(with: data, isFavoritesChosen: isFavoritesChosen, animate: animate)
+        updateUI(with: data, isFavoritesChosen: isFavoritesChosen, isFilteringMode: isFilteringMode, animate: animate)
     }
 
-    func updateUI(with data: [StockModel], isFavoritesChosen: Bool, animate: Bool) {
-        contentTableView.updateUI(with: data, isFavoriteChosen: isFavoritesChosen, animate: animate)
+    func updateUI(with data: [StockModel], isFavoritesChosen: Bool, isFilteringMode: Bool, animate: Bool) {
+        contentTableView.updateUI(with: data, isFavoriteChosen: isFavoritesChosen, isFilteringMode: isFilteringMode, animate: animate)
 
     }
 }

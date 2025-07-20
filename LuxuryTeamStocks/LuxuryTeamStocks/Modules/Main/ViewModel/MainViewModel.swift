@@ -70,7 +70,7 @@ private extension MainViewModel {
 
     func showAllFilteredElements(animate: Bool = true) {
         displayData = getCorrectData()
-        view?.configure(with: displayData, isFavoritesChosen, animate: animate)
+        updateView()
     }
 
     func tabSelected(_ index: Int) {
@@ -79,12 +79,12 @@ private extension MainViewModel {
         } else if index == 1 {
             isFavoritesChosen = true
         }
-        updateView()
+        updateData()
     }
 
     func addOrRemoveFromFavorites(_ stock: StockModel) {
         setStockAsFavorite(stock)
-        updateView(animate: false)
+        updateData(animate: false)
     }
 
     func filterStocks(by text: String) {
@@ -95,7 +95,7 @@ private extension MainViewModel {
             isFiltering = true
             filterText = text
         }
-        updateView()
+        updateData()
     }
 
     func loadData() {
@@ -128,34 +128,39 @@ private extension MainViewModel {
     }
 
     func checkDataAndUpdateView() {
-        isDataValid() ? updateView() : getError()
+        isDataValid() ? updateData() : getError()
     }
 
     func isDataValid() -> Bool {
         return !data.isEmpty
     }
 
-    func updateView(animate: Bool = true) {
+    func updateData(animate: Bool = true) {
         updateFavorites()
         displayData = getCorrectData()
         if isFiltering {
             showFirstFourElements()
         } else {
-            view?.configure(with: displayData, isFavoritesChosen, animate: animate)
+            updateView()
         }
     }
 
     func showFirstFourElements(animate: Bool = true) {
         if displayData.count < 4 {
-            view?.configure(with: displayData, isFavoritesChosen, animate: animate)
+            updateView()
         } else {
             print("Here")
             let first4 = Array(displayData.prefix(4))
             print(first4.count)
-            view?.configure(with: first4, isFavoritesChosen, animate: animate)
+            updateView(with: first4)
         }
     }
-    
+
+    func updateView(with data: [StockModel]? = nil, animate: Bool = true) {
+        let correctData = data ?? displayData
+        view?.configure(with: correctData, isFavoritesChosen, isFiltering, animate: animate)
+    }
+
     func getError() {
         DispatchQueue.main.async { [weak self] in
             self?.view?.showError()
