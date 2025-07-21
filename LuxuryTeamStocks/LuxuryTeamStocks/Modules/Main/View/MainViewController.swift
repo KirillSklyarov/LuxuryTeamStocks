@@ -31,7 +31,6 @@ final class MainViewController: UIViewController {
     private lazy var contentStack = AppStackView([searchBar, headerAndTableViewStack], axis: .vertical, spacing: 20)
 
 
-    var onAddToFavButtonTapped: ((StockModel) -> Void)?
     let viewModel: MainViewModelling
 
     // MARK: - Init
@@ -84,7 +83,7 @@ extension MainViewController: MainViewInterface {
     }
 }
 
-// MARK: - SetupUI
+// MARK: - Setup UI
 private extension MainViewController {
     func setupUI() {
         view.backgroundColor = .systemBackground
@@ -124,7 +123,7 @@ private extension MainViewController {
     }
 }
 
-// MARK: - Actions
+// MARK: - Setup actions
 private extension MainViewController {
     func setupAction() {
         categoryHeader.tabSelected = { [weak self] tag in
@@ -231,7 +230,7 @@ private extension MainViewController {
     }
 }
 
-// MARK: - Hide the keyboard
+// MARK: - Hide keyboard
 private extension MainViewController {
     func setupDismissKeyboardGesture() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))

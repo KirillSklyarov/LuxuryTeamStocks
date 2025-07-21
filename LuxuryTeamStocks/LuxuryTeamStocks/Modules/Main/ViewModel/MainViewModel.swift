@@ -142,14 +142,12 @@ private extension MainViewModel {
     }
 
     func getFavoritesFromUD() {
-//        print(#function)
         self.favorites = udManager.loadFavoritesFromUD()
     }
 
     func getCorrectData() -> [StockModel] {
         updateFavorites()
         let base = isFavoritesChosen ? favorites : data
-        //        print(base, filterText)
 
         if filterText.isEmpty {
             return base
