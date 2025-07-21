@@ -37,6 +37,8 @@ private extension AppLabel {
         case .category:
             font = AppConstants.Fonts.headline
             textColor = AppConstants.Colors.black
+            backgroundColor = .systemBackground
+            isOpaque = true
         case .title:
             font = AppConstants.Fonts.regular
             textColor = AppConstants.Colors.black

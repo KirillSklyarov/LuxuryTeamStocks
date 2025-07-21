@@ -14,6 +14,7 @@ final class SearchView: UIView {
         let view = UIView()
         view.clipsToBounds = true
         view.setBorder(AppConstants.Colors.black, borderWidth: 1)
+        view.backgroundColor = .clear
         return view
     }()
     private lazy var glassImageView = AppImageView(type: .glass)
@@ -26,6 +27,7 @@ final class SearchView: UIView {
             glassImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
         view.widthAnchor.constraint(equalToConstant: 20).isActive = true
+         view.backgroundColor = .clear
         return view
     }()
 
@@ -40,6 +42,7 @@ final class SearchView: UIView {
         textField.clearButtonMode = .never
         textField.font = AppConstants.Fonts.searchBar
         textField.tintColor = AppConstants.Colors.black
+        textField.backgroundColor = .clear
         return textField
     }()
 
@@ -150,7 +153,6 @@ private extension SearchView {
     func setupUI() {
         textField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         textField.rightView = clearButtonContainer
-//        textField.rightViewMode = .whileEditing
         textField.delegate = self
 
         configureGlassImageView()
@@ -160,6 +162,7 @@ private extension SearchView {
 
         searchHeightConstraint = heightAnchor.constraint(equalToConstant: 48)
         searchHeightConstraint.isActive = true
+
     }
 
     func configureGlassImageView() {
@@ -178,7 +181,7 @@ private extension SearchView {
         }
     }
 
-    private func exitSearchMode() {
+    func exitSearchMode() {
         textField.resignFirstResponder()
         textField.text = ""
         textField.placeholder = "Find company or ticker"

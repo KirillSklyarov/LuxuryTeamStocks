@@ -11,17 +11,7 @@ import SDWebImage
 final class StocksTableViewCell: UITableViewCell {
 
     // MARK: - UI Properties
-    private lazy var logoImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.heightAnchor.constraint(equalToConstant: 52).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 52).isActive = true
-        imageView.layer.cornerRadius = AppConstants.CornerRadius.medium16
-        imageView.clipsToBounds = true
-        return imageView
-    }()
-
+    private lazy var logoImageView = AppImageView(type: .stackLogo)
     private lazy var titleLabel = AppLabel(type: .title)
     private lazy var subTitleLabel = AppLabel(type: .subtitle)
 
@@ -36,9 +26,7 @@ final class StocksTableViewCell: UITableViewCell {
 
     private lazy var rateStack = AppStackView([rateLabel, rateChangeLabel], axis: .vertical, alignment: .trailing)
 
-    private lazy var contentStack = AppStackView([logoImageView, textStack, rateStack], axis: .horizontal, spacing: 12, alignment: .center)
-
-    var onAddToFavButtonTapped: (() -> Void)?
+    private lazy var contentStack = AppStackView([logoImageView, textStack, rateStack], axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill)
 
     private lazy var cellContainer: UIView = {
         let view = UIView()
@@ -48,6 +36,8 @@ final class StocksTableViewCell: UITableViewCell {
         view.clipsToBounds = true
         return view
     }()
+
+    var onAddToFavButtonTapped: (() -> Void)?
 
     // MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -74,29 +64,14 @@ extension StocksTableViewCell {
         updateChangeStockPrice(with: stock)
 
         cellContainer.backgroundColor = isGray ? AppConstants.Colors.brightGray : .clear
+
+
+//        titleLabel.isOpaque = true
+//        subTitleLabel.isOpaque = true
+//        isFavoriteTextStack.isOpaque = true
+//        textStack.isOpaque = true
+//        contentStack.isOpaque = true
     }
-
-    private func updateFavoriteButtonImage(_ stock: StockModel) {
-        let image = stock.isFavorite ? "starGold" : "starGray"
-        addToFavoriteButton.setImage(UIImage(named: image), for: .normal)
-    }
-
-    private func updateChangeStockPrice(with stock: StockModel) {
-        let changeText = "$\(abs(stock.change)) (\(abs(stock.changePercent))%)"
-
-        if stock.change > 0 {
-            rateChangeLabel.textColor = AppConstants.Colors.green
-            rateChangeLabel.text = "+\(changeText)"
-        } else {
-            rateChangeLabel.textColor = AppConstants.Colors.red
-            rateChangeLabel.text = "-\(changeText)"
-        }
-
-    }
-
-//    func isHideCheckmarkView(_ bool: Bool) {
-//        checkView.alpha = bool ? 0 : 1
-//    }
 }
 
 // MARK: - Configure cell
@@ -110,13 +85,14 @@ private extension StocksTableViewCell {
 
     func setupLayout() {
         cellContainer.setConstraints(insets: .init(top: AppConstants.Insets.small4, left: 0, bottom: AppConstants.Insets.small4, right: 0))
+
         contentStack.setConstraints(insets: .init(
             top: AppConstants.Insets.medium8,
             left: AppConstants.Insets.medium8,
             bottom: AppConstants.Insets.medium8,
-            right: AppConstants.Insets.large12
-        )
-        )
+            right: AppConstants.Insets.large12))
+
+        textStack.widthAnchor.constraint(equalTo: contentStack.widthAnchor, multiplier: 0.5).isActive = true
     }
 }
 
@@ -125,6 +101,26 @@ private extension StocksTableViewCell {
     func setupAction() {
         addToFavoriteButton.onAddToFavButtonTapped = { [weak self] in
             self?.onAddToFavButtonTapped?()
+        }
+    }
+}
+
+// MARK: - Private methods
+private extension StocksTableViewCell {
+    func updateFavoriteButtonImage(_ stock: StockModel) {
+        let image = stock.isFavorite ? "starGold" : "starGray"
+        addToFavoriteButton.setImage(UIImage(named: image), for: .normal)
+    }
+
+    func updateChangeStockPrice(with stock: StockModel) {
+        let changeText = "$\(abs(stock.change)) (\(abs(stock.changePercent))%)"
+
+        if stock.change > 0 {
+            rateChangeLabel.textColor = AppConstants.Colors.green
+            rateChangeLabel.text = "+\(changeText)"
+        } else {
+            rateChangeLabel.textColor = AppConstants.Colors.red
+            rateChangeLabel.text = "-\(changeText)"
         }
     }
 }

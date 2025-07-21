@@ -87,6 +87,8 @@ extension MainViewController: MainViewInterface {
 private extension MainViewController {
     func setupUI() {
         view.backgroundColor = .systemBackground
+        view.isOpaque = true
+
         configureContentStack()
         setupSearchPlaceholder()
         configureActivityIndicator()

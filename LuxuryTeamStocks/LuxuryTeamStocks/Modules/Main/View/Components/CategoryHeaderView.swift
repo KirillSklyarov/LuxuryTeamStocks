@@ -26,12 +26,16 @@ final class CategoryHeaderView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    //    func setupUI(_ isFavoriteChosen: Bool) -> UIView {
     func setupUI() {
+//        favoriteButton.backgroundColor = .systemBackground
+//        stockButton.backgroundColor = .systemBackground
+//        categoriesStackView.backgroundColor = .systemBackground
+//        backgroundColor = .systemBackground
+
+        setupBlending([categoriesStackView])
+
         addSubviews(categoriesStackView)
         categoriesStackView.setConstraints()
-
-        //        categoriesStackView.backgroundColor = .systemBackground
 
         stockButton.onButtonTapped = { [weak self] tag in
             guard let self = self else { return }
@@ -46,6 +50,13 @@ final class CategoryHeaderView: UIView {
             favoriteButton.applySelectedStyle(true)
             //            print(tag)
             tabSelected?(tag)
+        }
+    }
+
+    func setupBlending(_ stacks: [UIStackView]) {
+        stacks.forEach {
+            $0.backgroundColor = .systemBackground
+            $0.isOpaque = true
         }
     }
 }

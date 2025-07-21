@@ -11,10 +11,7 @@ import UIKit
 enum AppImageViewType {
     case glass
     case arrow
-//    case title
-//    case subtitle
-//    case rate
-//    case rateChange
+    case stackLogo
 }
 
 final class AppImageView: UIImageView {
@@ -39,11 +36,19 @@ private extension AppImageView {
             translatesAutoresizingMaskIntoConstraints = false
             heightAnchor.constraint(equalToConstant: 16).isActive = true
             widthAnchor.constraint(equalToConstant: 16).isActive = true
+            backgroundColor = .clear
         case .arrow:
             image = UIImage(named: "leftArrow")
             translatesAutoresizingMaskIntoConstraints = false
             heightAnchor.constraint(equalToConstant: 16).isActive = true
             widthAnchor.constraint(equalToConstant: 16).isActive = true
+        case .stackLogo:
+            contentMode = .scaleAspectFit
+            translatesAutoresizingMaskIntoConstraints = false
+            heightAnchor.constraint(equalToConstant: 52).isActive = true
+            widthAnchor.constraint(equalToConstant: 52).isActive = true
+            layer.cornerRadius = AppConstants.CornerRadius.medium16
+            clipsToBounds = true
         }
 //        self.numberOfLines = numberOfLines
     }
